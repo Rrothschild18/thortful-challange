@@ -9,7 +9,13 @@ export const routes: Routes = [
       import('./home-wrapper.component').then(
         (cmp) => cmp.HomeWrapperComponent
       ),
-    children: [],
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./home.component').then((cmp) => cmp.HomeComponent),
+      },
+    ],
   },
 ];
 

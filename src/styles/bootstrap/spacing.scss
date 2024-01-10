@@ -1,0 +1,25 @@
+$spacer: 8px;
+
+$spacers: (
+  0: 0,
+  1: $spacer * 0.5,
+  //xs-4
+  2: $spacer * 1,
+  //sm-8
+  3: $spacer * 1.5,
+  //md-12
+  4: $spacer * 2,
+  //lg-16
+  5: $spacer * 2.5,
+  //xl-20
+  6: $spacer * 3,
+  //xxl-24
+  7: $spacer * 3.5,
+  //28
+  8: $spacer * 4,
+  //32
+  9: $spacer * 4.5,
+  //36
+  10: $spacer * 5,
+  //40
+);
