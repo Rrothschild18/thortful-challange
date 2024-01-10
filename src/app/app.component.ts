@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, OnInit, inject } from '@angular/core';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { Observable, filter, map } from 'rxjs';
 import { CoreModule } from './core/core.module';
 import { SharedModule } from './shared/shared.module';
 
@@ -11,6 +12,27 @@ import { SharedModule } from './shared/shared.module';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'thortful-challange';
+
+  #router = inject(Router);
+  isLoginRoute$!: Observable<boolean>;
+
+  constructor() {
+    this.hideMenuByUrl();
+  }
+
+  ngOnInit(): void {}
+
+  hideMenuByUrl() {
+    this.isLoginRoute$ = this.#router.events.pipe(
+      filter((router) => router instanceof NavigationEnd),
+      map((router: unknown) => {
+        let routers = router as NavigationEnd;
+        const paths = ['/auth', '/not-found'];
+
+        return !paths.includes(routers.url);
+      })
+    );
+  }
 }
