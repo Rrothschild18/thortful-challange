@@ -1,3 +1,7 @@
+@if (this.isLoginRoute$ | async) {
 <app-layout>
   <router-outlet></router-outlet>
 </app-layout>
+} @else {
+<router-outlet></router-outlet>
+}
