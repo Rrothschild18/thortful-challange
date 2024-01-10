@@ -1,0 +1,41 @@
+// Bootstrap varivles
+// @import "~bootstrap/scss/functions";
+@import "@bootstrap/scss/_functions.scss";
+
+// @import "~bootstrap/scss/_variables.scss";
+@import "@bootstrap/scss/_variables.scss";
+
+//@override variables
+
+//borders
+@import "./borders.scss";
+
+//Colors
+@import "./colors.scss";
+
+//Fonts
+@import "./fonts.scss";
+
+//Spacing utils
+@import "./spacing.scss";
+
+@import "./options.scss";
+
+//Core bootstrap
+@import "@bootstrap/scss/_mixins.scss";
+@import "@bootstrap/scss/_maps.scss";
+@import "@bootstrap/scss/_root.scss";
+
+// @import "@bootstrap/scss/reboot";
+
+@import "@bootstrap/scss/_utilities.scss";
+@import "@bootstrap/scss/_containers.scss";
+
+@import "@bootstrap/scss/_helpers.scss";
+@import "@bootstrap/scss/utilities/_api.scss";
+@import "@bootstrap/scss/_grid.scss";
+
+// @import "@bootstrap/scss/buttons";
+// @import "@bootstrap/scss/button-group";
+
+// @import "@bootstrap/scss/tables";

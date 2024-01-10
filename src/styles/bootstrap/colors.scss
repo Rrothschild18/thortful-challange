@@ -1,0 +1,42 @@
+$youtube-black: #030303;
+$youtube-black-600: #141414;
+$youtube-black-400: #1f1f1f;
+$youtube-black-300: #292929;
+$youtube-black-100: #333333;
+
+$youtube-red: #f50000;
+$youtube-red-600: #ff1f1f;
+$youtube-red-400: #ff5c5c;
+$youtube-red-300: #ff8585;
+$youtube-red-100: #ffc2c2;
+
+$youtube-grey: #808080;
+$youtube-grey-600: #8f8f8f;
+$youtube-grey-400: #a3a3a3;
+$youtube-grey-100: #b8b8b8;
+
+$youtube-white: #ffffff;
+
+// scss-docs-start theme-color-variables
+$primary: $youtube-black;
+$secondary: $youtube-red;
+// scss-docs-end theme-color-variables
+
+$theme-colors: (
+  "primary": $youtube-black,
+  "primary-600": $youtube-black-600,
+  "primary-400": $youtube-black-400,
+  "primary-300": $youtube-black-300,
+  "primary-100": $youtube-black-100,
+
+  "secondary": $youtube-red,
+  "secondary-600": $youtube-red-600,
+  "secondary-400": $youtube-red-400,
+  "secondary-300": $youtube-red-300,
+  "secondary-100": $youtube-red-100,
+
+  "gray": $youtube-grey,
+  "gray-dark": $youtube-grey-600,
+  "gray-medium": $youtube-grey-400,
+  "gray-light": $youtube-grey-100,
+);
