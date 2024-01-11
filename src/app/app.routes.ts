@@ -14,4 +14,11 @@ export const routes: Routes = [
     path: 'auth',
     loadChildren: () => import('./auth/auth.module').then((m) => m.AuthModule),
   },
+  {
+    path: '**',
+    loadComponent: () =>
+      import('./core/components/not-found/not-found.component').then(
+        (cmp) => cmp.NotFoundComponent
+      ),
+  },
 ];
