@@ -29,7 +29,9 @@ import { HeaderComponent } from '../header/header.component';
         some content to expand
       </mat-drawer>
 
-      <ng-content> </ng-content>
+      <mat-drawer-content class=" w-100">
+        <ng-content> </ng-content>
+      </mat-drawer-content>
     </mat-drawer-container>
   `,
   styles: [
