@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Action, State, StateContext } from '@ngxs/store';
+import { Action, Selector, State, StateContext } from '@ngxs/store';
 import { of } from 'rxjs';
 import { User } from './user.actions';
 import { UserStateModel } from './user.model';
@@ -40,6 +40,11 @@ const INITIAL_STATE: UserStateModel = {
 })
 @Injectable()
 export class UserState {
+  @Selector()
+  public static profileImage(state: UserStateModel) {
+    return state.images[0];
+  }
+
   @Action(User.SetMe)
   onSetUserMe(ctx: StateContext<UserStateModel>, payload: User.SetMe) {
     const { user, accessToken } = payload.payload;
