@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
 import { Layout } from './layout.actions';
-import { LayoutStateModel } from './layout.meta.state';
+import { LayoutStateModel } from './layout.state';
 
 const INITIAL_STATE: LayoutStateModel = {
   isSidebarOpen: true,
