@@ -16,7 +16,6 @@ export class UserService {
 
   getUserTopItems(getParams: UserTopItemsParams): Observable<TopItemsList> {
     const params = new HttpParams();
-
     Object.entries(
       ([key, value]: [keyof UserTopItemsParams, string | number]) => {
         params.append(key, value);
@@ -29,5 +28,13 @@ export class UserService {
         params,
       },
     );
+  }
+
+  getUserProfile(): Observable<unknown> {
+    return this.http.get<unknown>(`${this.#profileURL}/`);
+  }
+
+  getUserFollowers(): Observable<unknown> {
+    return this.http.get<unknown>(`${this.#followingURL}/`);
   }
 }
