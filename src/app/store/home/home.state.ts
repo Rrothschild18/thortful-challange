@@ -44,8 +44,7 @@ export class HomeState {
     ctx.dispatch(
       new Home.FetchTopArtists({
         limit: 10,
-        offset: 5,
-        type: 'artist',
+        offset: 1,
         time_range: 'medium_term',
       }),
     );
@@ -60,7 +59,6 @@ export class HomeState {
       catchError((err) => {
         ctx.dispatch(new Home.FetchMusicGenresFailed({ error: err }));
 
-        debugger;
         if (err.status === HttpStatusCode.TooManyRequests)
           return of({
             genres: [
@@ -78,7 +76,21 @@ export class HomeState {
             ] as unknown as Genres[],
           });
 
-        return of({ genres: [] });
+        return of({
+          genres: [
+            'acoustic',
+            'afrobeat',
+            'alt-rock',
+            'alternative',
+            'ambient',
+            'anime',
+            'black-metal',
+            'bluegrass',
+            'blues',
+            'bossanova',
+            'brazil',
+          ] as unknown as Genres[],
+        });
       }),
       tap((response: GenresFromApi) =>
         ctx.dispatch(new Home.FetchMusicGenresSuccess(response.genres)),
