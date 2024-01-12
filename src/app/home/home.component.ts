@@ -41,7 +41,7 @@ import { HomeState } from '../store/home/home.state';
                   '/home',
                   {
                     outlets: {
-                      overview: ['artist-overview', { id: artist.id }]
+                      overview: ['artist-overview', artist.id]
                     }
                   }
                 ]"
