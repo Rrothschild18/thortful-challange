@@ -8,7 +8,7 @@ import { GenresFromApi } from './genres.model';
   providedIn: 'root',
 })
 export class GenresService {
-  readonly #genresURL: string = `${environment.baseURL}/recommendations/available-genre-seeds`;
+  readonly #genresURL: string = `${environment.baseURL}/recommendations/available-genre-seedss`;
 
   constructor(private http: HttpClient) {}
 
