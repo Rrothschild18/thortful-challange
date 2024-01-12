@@ -33,4 +33,32 @@ export class ArtistService {
       },
     );
   }
+
+  getArtistTopTracks(
+    id: string,
+    getParams: Omit<ArtistTopItemsParams, 'id'>,
+  ): Observable<ArtistTopAlbumsList> {
+    const params = new HttpParams({ fromObject: getParams });
+
+    return this.http.get<ArtistTopAlbumsList>(
+      `${this.#artistURL}/${id}/albums`,
+      {
+        params,
+      },
+    );
+  }
+
+  getArtistRelated(
+    id: string,
+    getParams: Omit<ArtistTopItemsParams, 'id'>,
+  ): Observable<ArtistTopAlbumsList> {
+    const params = new HttpParams({ fromObject: getParams });
+
+    return this.http.get<ArtistTopAlbumsList>(
+      `${this.#artistURL}/${id}/albums`,
+      {
+        params,
+      },
+    );
+  }
 }
