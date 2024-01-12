@@ -15,19 +15,11 @@ export class UserService {
   constructor(private http: HttpClient) {}
 
   getUserTopItems(getParams: UserTopItemsParams): Observable<TopItemsList> {
-    const params = new HttpParams();
-    Object.entries(
-      ([key, value]: [keyof UserTopItemsParams, string | number]) => {
-        params.append(key, value);
-      },
-    );
+    const params = new HttpParams({ fromObject: getParams });
 
-    return this.http.get<TopItemsList>(
-      `${this.#topItemsURL}/${getParams.type}s`,
-      {
-        params,
-      },
-    );
+    return this.http.get<TopItemsList>(`${this.#topItemsURL}/artists`, {
+      params,
+    });
   }
 
   getUserProfile(): Observable<unknown> {

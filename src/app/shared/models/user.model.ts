@@ -1,5 +1,4 @@
 export type UserTopItemsParams = {
-  type: 'artist' | 'tracks';
   time_range: 'medium_term' | 'short_term';
   limit: number;
   offset: number;

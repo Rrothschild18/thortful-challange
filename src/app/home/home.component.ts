@@ -36,6 +36,7 @@ import { HomeState } from '../store/home/home.state';
           @if (artists$ | async; as artists) {
             @for (artist of artists; track artist.uri) {
               <a
+                class="text-decoration-none"
                 [routerLink]="[
                   '/home',
                   {
@@ -79,13 +80,15 @@ import { HomeState } from '../store/home/home.state';
           height: 36px;
         }
 
+        a {
+          cursor: pointer;
+        }
+
         .Scroll {
           width: 1200px;
           overflow-x: scroll;
           height: 240px;
 
-          // scroll bar style - poc
-          /* width */
           &::-webkit-scrollbar {
             width: 10px;
             background: transparent;
@@ -111,9 +114,11 @@ import { HomeState } from '../store/home/home.state';
           p {
             font-size: 14px;
           }
+
           small {
             font-size: 12px;
           }
+
           img {
             height: 175px;
             width: 175px;
