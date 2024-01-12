@@ -8,7 +8,7 @@ export const routes: Routes = [
     path: '',
     loadComponent: () =>
       import('./home-wrapper.component').then(
-        (cmp) => cmp.HomeWrapperComponent
+        (cmp) => cmp.HomeWrapperComponent,
       ),
     canActivate: [AuthGuard],
     children: [
@@ -16,6 +16,14 @@ export const routes: Routes = [
         path: '',
         loadComponent: () =>
           import('./home.component').then((cmp) => cmp.HomeComponent),
+      },
+      {
+        path: 'artist-overview',
+        outlet: 'overview',
+        loadComponent: () =>
+          import('./artist-overview/artist-overview.component').then(
+            (cmp) => cmp.ArtistOverviewComponent,
+          ),
       },
     ],
   },
