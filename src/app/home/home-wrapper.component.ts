@@ -5,7 +5,12 @@ import { RouterOutlet } from '@angular/router';
   selector: 'app-home-wrapper',
   standalone: true,
   imports: [RouterOutlet],
-  template: `<router-outlet> </router-outlet>`,
+  template: `
+    <!-- <> -->
+    <!-- <> -->
+    <router-outlet> </router-outlet>
+    <router-outlet name="overview"></router-outlet>
+  `,
   styles: [``],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
