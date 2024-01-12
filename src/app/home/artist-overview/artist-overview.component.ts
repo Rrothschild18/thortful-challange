@@ -105,15 +105,16 @@ import { SharedModule } from '../../shared/shared.module';
 
         <div class="d-flex justify-content-end mt-5">
           <div>
-            <button
+            <a
               mat-button
               class="d-flex align-items-center justify-content-center"
+              [routerLink]="['/artist', artistId$.getValue()]"
             >
               <mat-icon>arrow_forward</mat-icon>
               <p class="m-0 text-decoration-underline details">
                 See full details
               </p>
-            </button>
+            </a>
           </div>
         </div>
       </div>
