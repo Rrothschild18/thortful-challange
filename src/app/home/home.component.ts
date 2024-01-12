@@ -1,25 +1,22 @@
 import { AsyncPipe, JsonPipe, TitleCasePipe } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  inject,
+} from '@angular/core';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatGridListModule } from '@angular/material/grid-list';
 import { RouterModule } from '@angular/router';
+import { Artist } from '@models/artist.model';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { Artist } from '../shared/models/artist.model';
 import { Home } from '../store/home/home.actions';
 import { HomeState } from '../store/home/home.state';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [
-    AsyncPipe,
-    JsonPipe,
-    MatChipsModule,
-    TitleCasePipe,
-    MatGridListModule,
-    RouterModule,
-  ],
+  imports: [AsyncPipe, JsonPipe, MatChipsModule, TitleCasePipe, RouterModule],
   template: `
     <section class="Home">
       <section class="container">
@@ -128,6 +125,7 @@ import { HomeState } from '../store/home/home.state';
       }
     `,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent implements OnInit {
   readonly #store = inject(Store);

@@ -1,6 +1,4 @@
-import { Artist } from './artist.model';
-import { ExternalUrls } from './user.model';
-
+import { Artist, ExternalUrls } from '@models/index';
 export interface ArtistTopAlbumsList {
   href: string;
   limit: number;

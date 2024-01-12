@@ -1,8 +1,5 @@
+import { TopItemsList, UserTopItemsParams } from '@models/index';
 import { Genres } from 'src/app/home/services/genres.model';
-import {
-  TopItemsList,
-  UserTopItemsParams,
-} from 'src/app/shared/models/user.model';
 
 export namespace Home {
   export class FirstLoad {

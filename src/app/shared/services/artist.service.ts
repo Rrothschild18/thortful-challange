@@ -5,8 +5,11 @@ import { environment } from 'src/environments/environment.development';
 import {
   ArtistTopAlbumsList,
   ArtistTopItemsParams,
-} from '../models/albums.model';
-import { Artist } from '../models/artist.model';
+  Market,
+  TrackListing,
+} from '@models/index';
+import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment.development';
 
 @Injectable({
   providedIn: 'root',

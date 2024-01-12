@@ -1,12 +1,11 @@
 import { HttpStatusCode } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Artist, TopItemsList } from '@models/index';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { UserService } from '@services/user.service';
+import { UserService } from '@services/index';
 import { Observable, catchError, of, tap } from 'rxjs';
 import { Genres, GenresFromApi } from 'src/app/home/services/genres.model';
 import { GenresService } from 'src/app/home/services/genres.service';
-import { Artist } from 'src/app/shared/models/artist.model';
-import { TopItemsList } from 'src/app/shared/models/user.model';
 import { Home } from './home.actions';
 import { HomeStateModel } from './home.model';
 
