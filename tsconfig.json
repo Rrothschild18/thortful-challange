@@ -23,6 +23,7 @@
     "paths": {
       "@auth/*": ["src/app/auth/*"],
       "@services/*": ["src/app/shared/services/*"],
+      "@models/*": ["src/app/shared/models/*"],
       "@features/*": ["src/app/features/*"],
       "@bootstrap/*": ["node_modules/bootstrap/*"]
     }
