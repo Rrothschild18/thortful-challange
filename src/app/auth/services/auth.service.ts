@@ -2,12 +2,13 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AuthorizedSpotifyUser } from '@auth/auth.models';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment.development';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  #userProfileURL: string = 'https://api.spotify.com/v1/me';
+  readonly #userProfileURL: string = `${environment.baseURL}/me`;
 
   constructor(private http: HttpClient) {}
 

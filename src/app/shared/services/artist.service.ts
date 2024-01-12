@@ -2,17 +2,17 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment.development';
-import { GenresFromApi } from './genres.model';
+import { Artist } from '../models/artist.model';
 
 @Injectable({
   providedIn: 'root',
 })
-export class GenresService {
-  readonly #genresURL: string = `${environment.baseURL}/recommendations/available-genre-seeds`;
+export class ArtistService {
+  #artistURL: string = `${environment.baseURL}/artists`;
 
   constructor(private http: HttpClient) {}
 
-  getGenres(): Observable<GenresFromApi> {
-    return this.http.get<GenresFromApi>(`${this.#genresURL}`);
+  getOneArtist(id: string): Observable<Artist> {
+    return this.http.get<Artist>(`${this.#artistURL}/${id}`);
   }
 }
