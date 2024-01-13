@@ -38,9 +38,9 @@ type Image = {
 };
 
 export type ArtistTopItemsParams = {
-  type: 'artist' | 'tracks';
+  type?: 'artist' | 'tracks';
   id: string;
-  include_groups: 'album' | 'appears_on';
+  include_groups: 'album' | 'appears_on' | string;
   market: Market;
   limit: number;
   offset: number;
