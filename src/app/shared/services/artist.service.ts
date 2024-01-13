@@ -25,7 +25,7 @@ export class ArtistService {
 
   getArtistTopAlbums(
     id: string,
-    getParams: Omit<ArtistTopItemsParams, 'id'>,
+    getParams: Omit<ArtistTopItemsParams, 'id' | 'artist'>,
   ): Observable<ArtistTopAlbumsList> {
     const params = new HttpParams({ fromObject: getParams });
 

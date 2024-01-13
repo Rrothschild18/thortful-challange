@@ -1,8 +1,29 @@
-import { ArtistList, ArtistTopAlbumsList, TrackListing } from '@models/index';
+import {
+  ArtistList,
+  ArtistTopAlbumsList,
+  Artist as IArtist,
+  TrackListing,
+} from '@models/index';
 
 export namespace Artist {
   export class FirstLoadSingle {
     public static readonly type = '[Artist] FirstLoadSingle';
+  }
+
+  /** Artist */
+
+  export class FetchArtist {
+    public static readonly type = '[Artist] Fetch artist ';
+  }
+
+  export class FetchArtistSuccess {
+    public static readonly type = '[Artist] Fetch artist  successful';
+    constructor(public payload: IArtist) {}
+  }
+
+  export class FetchArtistFailed {
+    public static readonly type = '[Artist] Fetch artist  error occurred';
+    constructor(public payload: { error: Record<string, unknown> }) {}
   }
 
   /** Tracks */

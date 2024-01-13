@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import {
   Album,
-  Artist as ArtistModel,
   ArtistTopItemsParams,
+  Artist as IArtist,
   Track,
 } from '@models/index';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
@@ -13,6 +13,23 @@ import { ArtistStateModel } from './artist.model';
 
 const INITIAL_STATE: ArtistStateModel = {
   id: '',
+  artist: {
+    external_urls: {
+      spotify: '',
+    },
+    followers: {
+      href: '',
+      total: 0,
+    },
+    genres: [],
+    href: '',
+    id: '',
+    images: [],
+    name: '',
+    popularity: 0,
+    type: '',
+    uri: '',
+  },
   relatedArtists: [],
   albums: [],
   topTracks: [],
@@ -28,12 +45,21 @@ export class ArtistState {
   constructor(private artistService: ArtistService) {}
 
   @Selector()
+  public static artist(state: ArtistStateModel): IArtist {
+    return state.artist;
+  }
+  @Selector()
+  public static artistName(state: ArtistStateModel): string {
+    return state.artist.name;
+  }
+
+  @Selector()
   public static albums(state: ArtistStateModel): Album[] {
     return state.albums;
   }
 
   @Selector()
-  public static topRelated(state: ArtistStateModel): ArtistModel[] {
+  public static topRelated(state: ArtistStateModel): IArtist[] {
     return state.relatedArtists;
   }
 
@@ -42,12 +68,51 @@ export class ArtistState {
     return state.topTracks;
   }
 
-  //** Albums */
   @Action(Artist.FirstLoadSingle)
   onFirstLoadSingle(ctx: StateContext<ArtistStateModel>): void {
+    ctx.dispatch(new Artist.FetchArtist());
     ctx.dispatch(new Artist.FetchAlbums());
     ctx.dispatch(new Artist.FetchRelated());
     ctx.dispatch(new Artist.FetchTopTracks());
+  }
+
+  /** Artist */
+  @Action(Artist.FetchArtist)
+  onFetchArtist(ctx: StateContext<ArtistStateModel>): Observable<unknown> {
+    const state = ctx.getState();
+
+    return this.artistService.getOneArtist(state.id).pipe(
+      tap((response) => ctx.dispatch(new Artist.FetchArtistSuccess(response))),
+      catchError((err) => {
+        ctx.dispatch(new Artist.FetchArtistFailed(err));
+        return of({});
+      }),
+    );
+  }
+  @Action(Artist.FetchArtistSuccess)
+  onFetchArtistSuccess(
+    ctx: StateContext<ArtistStateModel>,
+    payload: Artist.FetchArtistSuccess,
+  ): void {
+    ctx.patchState({
+      artist: payload.payload,
+    });
+  }
+
+  @Action(Artist.FetchArtistFailed)
+  onFetchArtistFailed(
+    ctx: StateContext<ArtistStateModel>,
+    payload: Artist.FetchArtistFailed,
+  ): void {
+    const state = ctx.getState();
+    const { error } = payload.payload;
+
+    ctx.patchState({
+      errors: {
+        ...state.errors,
+        artist: error,
+      },
+    });
   }
 
   //** Albums */
@@ -56,12 +121,11 @@ export class ArtistState {
     ctx: StateContext<ArtistStateModel>,
   ): Observable<unknown> {
     const state = ctx.getState();
-    const params: Omit<ArtistTopItemsParams, 'id'> = {
+    const params: Omit<ArtistTopItemsParams, 'id' | 'artist'> = {
       limit: 10,
-      offset: 10,
+      offset: 1,
       market: 'US',
-      include_groups: 'album',
-      type: 'artist',
+      include_groups: 'album,single',
     };
 
     return this.artistService.getArtistTopAlbums(state.id, params).pipe(
