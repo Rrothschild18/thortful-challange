@@ -14,10 +14,10 @@ export class FollowersCounterPipe implements PipeTransform {
       return value.toString();
     } else if (value < 1000000) {
       const formattedValue = (value / 1000).toFixed(0);
-      return `${formattedValue}k followers`;
+      return `${formattedValue}k`;
     } else {
       const formattedValue = (value / 1000000).toFixed(1);
-      return `${formattedValue} mi followers`;
+      return `${formattedValue} mi`;
     }
   }
 }
