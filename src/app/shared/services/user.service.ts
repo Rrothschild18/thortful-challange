@@ -1,8 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { TopItemsList, UserTopItemsParams } from '@models/index';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment.development';
-import { TopItemsList, UserTopItemsParams } from './../models/user.model';
 
 @Injectable({
   providedIn: 'root',

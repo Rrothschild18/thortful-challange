@@ -1,4 +1,4 @@
-import { ExternalUrls, Followers } from './user.model';
+import { ExternalUrls, Followers } from '@models/index';
 
 export type Artist = {
   external_urls: ExternalUrls;
@@ -15,4 +15,8 @@ export type Artist = {
   popularity: number;
   type: string;
   uri: string;
+};
+
+export type ArtistList = {
+  artists: [];
 };

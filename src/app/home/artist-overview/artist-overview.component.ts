@@ -55,7 +55,8 @@ import { SharedModule } from '../../shared/shared.module';
                   {{ artist.name }}
                 </p>
                 <small class="text-gray fw-bold m-0 ">
-                  {{ artist.followers.total | followersCounter }}</small
+                  {{ artist.followers.total | followersCounter }}
+                  followers</small
                 >
 
                 <div class="mt-3 w-100">
@@ -70,6 +71,8 @@ import { SharedModule } from '../../shared/shared.module';
                         [selectable]="false"
                         >{{ genre | titlecase }}</mat-chip-option
                       >
+                    } @empty {
+                      <p>No genres to be displayed</p>
                     }
                   </div>
                 </div>
@@ -77,7 +80,6 @@ import { SharedModule } from '../../shared/shared.module';
             </div>
           </div>
         }
-
         <div class="mt-3">
           <section class="Album">
             <small class="fw-bold d-block section-title mb-2">Top albums</small>
@@ -97,6 +99,8 @@ import { SharedModule } from '../../shared/shared.module';
                       </div>
                     </div>
                   </div>
+                } @empty {
+                  <p>No albums to be displayed</p>
                 }
               }
             </div>
@@ -105,15 +109,17 @@ import { SharedModule } from '../../shared/shared.module';
 
         <div class="d-flex justify-content-end mt-5">
           <div>
-            <button
+            <a
               mat-button
+              color="accent"
               class="d-flex align-items-center justify-content-center"
+              [routerLink]="['/artist', artistId$.getValue()]"
             >
               <mat-icon>arrow_forward</mat-icon>
               <p class="m-0 text-decoration-underline details">
                 See full details
               </p>
-            </button>
+            </a>
           </div>
         </div>
       </div>
@@ -145,7 +151,7 @@ import { SharedModule } from '../../shared/shared.module';
             min-width: 32px;
             border-radius: 4px;
             font-size: 12px;
-            background-color: #f50000;
+            color: red;
           }
         }
 

@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AuthGuard } from '../core/guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -10,7 +9,6 @@ export const routes: Routes = [
       import('./home-wrapper.component').then(
         (cmp) => cmp.HomeWrapperComponent,
       ),
-    canActivate: [AuthGuard],
     children: [
       {
         path: '',
@@ -18,7 +16,7 @@ export const routes: Routes = [
           import('./home.component').then((cmp) => cmp.HomeComponent),
       },
       {
-        path: 'artist-overview',
+        path: 'artist-overview/:id',
         outlet: 'overview',
         loadComponent: () =>
           import('./artist-overview/artist-overview.component').then(

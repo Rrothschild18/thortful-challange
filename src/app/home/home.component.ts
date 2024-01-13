@@ -1,36 +1,25 @@
 import { AsyncPipe, JsonPipe, TitleCasePipe } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  inject,
+} from '@angular/core';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatGridListModule } from '@angular/material/grid-list';
 import { RouterModule } from '@angular/router';
+import { Artist } from '@models/artist.model';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
-import { Artist } from '../shared/models/artist.model';
 import { Home } from '../store/home/home.actions';
 import { HomeState } from '../store/home/home.state';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [
-    AsyncPipe,
-    JsonPipe,
-    MatChipsModule,
-    TitleCasePipe,
-    MatGridListModule,
-    RouterModule,
-  ],
+  imports: [AsyncPipe, JsonPipe, MatChipsModule, TitleCasePipe, RouterModule],
   template: `
     <section class="Home">
       <section class="container">
-        <mat-chip-listbox aria-label="Genres selection" class="mt-10">
-          @for (genre of genres$ | async; track genre) {
-            <mat-chip-option color="accent">{{
-              genre | titlecase
-            }}</mat-chip-option>
-          }
-        </mat-chip-listbox>
-
         <h1>Favorite artists</h1>
         <div class="Scroll d-flex flex-nowrap mt-10">
           @if (artists$ | async; as artists) {
@@ -41,7 +30,7 @@ import { HomeState } from '../store/home/home.state';
                   '/home',
                   {
                     outlets: {
-                      overview: ['artist-overview', { id: artist.id }]
+                      overview: ['artist-overview', artist.id]
                     }
                   }
                 ]"
@@ -65,12 +54,23 @@ import { HomeState } from '../store/home/home.state';
             }
           }
         </div>
+
+        <h1 class="mt-10">Recomendations</h1>
+
+        <mat-chip-listbox aria-label="Genres selection" class="mt-5">
+          @for (genre of genres$ | async; track genre) {
+            <mat-chip-option color="accent">{{
+              genre | titlecase
+            }}</mat-chip-option>
+          }
+        </mat-chip-listbox>
       </section>
     </section>
   `,
   styles: [
     `
       .Home {
+        height: 2000px;
         mat-chip-option {
           height: 32px;
           min-width: 32px;
@@ -128,6 +128,7 @@ import { HomeState } from '../store/home/home.state';
       }
     `,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent implements OnInit {
   readonly #store = inject(Store);

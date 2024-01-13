@@ -1,4 +1,4 @@
-import { Artist } from 'src/app/shared/models/artist.model';
+import { Artist } from '@models/index';
 
 export type HomeStateModel = {
   genres: any[];

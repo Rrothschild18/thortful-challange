@@ -24,7 +24,7 @@ import { HeaderComponent } from '../header/header.component';
     <!--  -->
     <app-header />
 
-    <mat-drawer-container class="vh-100" autosize>
+    <mat-drawer-container autosize>
       <mat-drawer #drawer mode="side" [opened]="isOpened$ | async">
         some content to expand
       </mat-drawer>

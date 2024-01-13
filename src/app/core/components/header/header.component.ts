@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { RouterLink } from '@angular/router';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { Layout } from 'src/app/store/layout/layout.actions';
@@ -20,6 +21,7 @@ import { UserState } from 'src/app/store/user/user.state';
     AsyncPipe,
     JsonPipe,
     NgIf,
+    RouterLink,
   ],
   template: ` <section class="Header justify-content-between">
     <mat-toolbar class="w-100 ">
@@ -27,12 +29,13 @@ import { UserState } from 'src/app/store/user/user.state';
         <button mat-icon-button class="me-3" (click)="toggleSidebar()">
           <mat-icon>menu</mat-icon>
         </button>
-        <picture class="d-flex align-items-center">
-          <img
-            alt="Youtube Music Logo"
-            src="https://music.youtube.com/img/on_platform_logo_dark.svg"
-          />
-        </picture>
+        <a class="d-flex align-items-center" [routerLink]="['/home']">
+          <picture>
+            <img
+              alt="Youtube Music Logo"
+              src="https://music.youtube.com/img/on_platform_logo_dark.svg"
+            /> </picture
+        ></a>
       </div>
 
       <div class="d-flex align-items-center">

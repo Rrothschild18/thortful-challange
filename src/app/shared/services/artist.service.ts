@@ -1,12 +1,15 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { environment } from 'src/environments/environment.development';
 import {
+  Artist,
+  ArtistList,
   ArtistTopAlbumsList,
   ArtistTopItemsParams,
-} from '../models/albums.model';
-import { Artist } from '../models/artist.model';
+  Market,
+  TrackListing,
+} from '@models/index';
+import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment.development';
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +25,7 @@ export class ArtistService {
 
   getArtistTopAlbums(
     id: string,
-    getParams: Omit<ArtistTopItemsParams, 'id'>,
+    getParams: Omit<ArtistTopItemsParams, 'id' | 'artist'>,
   ): Observable<ArtistTopAlbumsList> {
     const params = new HttpParams({ fromObject: getParams });
 
@@ -31,6 +34,20 @@ export class ArtistService {
       {
         params,
       },
+    );
+  }
+
+  getArtistTopTracks(id: string, market: Market): Observable<TrackListing> {
+    const params = new HttpParams({ fromObject: { market } });
+
+    return this.http.get<TrackListing>(`${this.#artistURL}/${id}/top-tracks`, {
+      params,
+    });
+  }
+
+  getArtistRelated(id: string): Observable<ArtistList> {
+    return this.http.get<ArtistList>(
+      `${this.#artistURL}/${id}/related-artists`,
     );
   }
 }
