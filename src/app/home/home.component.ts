@@ -20,14 +20,6 @@ import { HomeState } from '../store/home/home.state';
   template: `
     <section class="Home">
       <section class="container">
-        <mat-chip-listbox aria-label="Genres selection" class="mt-10">
-          @for (genre of genres$ | async; track genre) {
-            <mat-chip-option color="accent">{{
-              genre | titlecase
-            }}</mat-chip-option>
-          }
-        </mat-chip-listbox>
-
         <h1>Favorite artists</h1>
         <div class="Scroll d-flex flex-nowrap mt-10">
           @if (artists$ | async; as artists) {
@@ -62,12 +54,23 @@ import { HomeState } from '../store/home/home.state';
             }
           }
         </div>
+
+        <h1 class="mt-10">Recomendations</h1>
+
+        <mat-chip-listbox aria-label="Genres selection" class="mt-5">
+          @for (genre of genres$ | async; track genre) {
+            <mat-chip-option color="accent">{{
+              genre | titlecase
+            }}</mat-chip-option>
+          }
+        </mat-chip-listbox>
       </section>
     </section>
   `,
   styles: [
     `
       .Home {
+        height: 2000px;
         mat-chip-option {
           height: 32px;
           min-width: 32px;
