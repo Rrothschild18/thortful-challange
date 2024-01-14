@@ -1,5 +1,6 @@
 import { AsyncPipe, DatePipe, JsonPipe, TitleCasePipe } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   Component,
   Input,
   OnDestroy,
@@ -338,7 +339,7 @@ import { HomeState } from 'src/app/store/home/home.state';
       }
     `,
   ],
-  // changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ArtistViewComponent implements OnInit, OnDestroy {
   readonly #snackBar = inject(MatSnackBar);
@@ -364,11 +365,11 @@ export class ArtistViewComponent implements OnInit, OnDestroy {
   @Select(ArtistState.artistName)
   artistName$!: Observable<string>;
 
-  @Select(HomeState.favoriteArtists)
-  favoriteArtist$!: Observable<string[]>;
+  @Select(HomeState.favoriteArtistsIds)
+  favoriteArtistIds$!: Observable<string[]>;
 
   protected isAnFavoriteArtist$: Observable<boolean> = combineLatest({
-    favoriteArtistFromStore: this.favoriteArtist$,
+    favoriteArtistFromStore: this.favoriteArtistIds$,
     currentArtistId: this.artistId$,
   }).pipe(
     map(
@@ -418,10 +419,6 @@ export class ArtistViewComponent implements OnInit, OnDestroy {
   }
 
   onMouseEnter() {
-    const v = this.isAnFavorite();
-
-    debugger;
-
     if (this.isAnFavorite()) {
       this.icon$.next('star_half');
       return;
@@ -439,7 +436,7 @@ export class ArtistViewComponent implements OnInit, OnDestroy {
   }
 
   checkFavoriteArtist() {
-    this.isAnFavoriteArtist$ = this.favoriteArtist$.pipe(
+    this.isAnFavoriteArtist$ = this.favoriteArtistIds$.pipe(
       withLatestFrom(this.artistId$),
       map(
         ([favoriteArtistsFromStore, currentArtistId]: [string[], string]) =>

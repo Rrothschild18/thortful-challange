@@ -50,4 +50,9 @@ export class ArtistService {
       `${this.#artistURL}/${id}/related-artists`,
     );
   }
+
+  getSeveralArtists(ids: string[]): Observable<ArtistList> {
+    const params = new HttpParams({ fromObject: { ids: ids.join(',') } });
+    return this.http.get<ArtistList>(`${this.#artistURL}`, { params });
+  }
 }
