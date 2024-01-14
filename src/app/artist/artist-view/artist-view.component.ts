@@ -135,6 +135,8 @@ import { RouterLink } from '@angular/router';
                 </div>
               </div>
             </div>
+          } @empty {
+            <p>No albums</p>
           }
         </div>
       </section>
@@ -166,6 +168,8 @@ import { RouterLink } from '@angular/router';
                 </div>
               </div>
             </a>
+          } @empty {
+            <p>No related artists</p>
           }
         </div>
       </section>
@@ -273,7 +277,7 @@ import { RouterLink } from '@angular/router';
         .Scroll {
           max-width: 1200px;
           overflow-x: scroll;
-          height: 360px;
+          height: 100%;
 
           &::-webkit-scrollbar {
             width: 10px;

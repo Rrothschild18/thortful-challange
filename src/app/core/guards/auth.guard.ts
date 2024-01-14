@@ -1,3 +1,4 @@
+import { HttpStatusCode } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '@auth/services/auth.service';
@@ -16,14 +17,16 @@ export const AuthGuard: CanActivateFn = (route, state) => {
   if (hasAccessTokenFromLocalStorage) {
     return authService.getUser(accessToken).pipe(
       concatMap((spotifyUser) =>
-        store.dispatch(new User.SetMe({ user: spotifyUser, accessToken }))
+        store.dispatch(new User.SetMe({ user: spotifyUser, accessToken })),
       ),
       map(() => true),
-      catchError((err: unknown) => {
+      catchError((err: Record<string, unknown>) => {
+        if (err['status'] === HttpStatusCode.Unauthorized) {
+        }
         console.log({ err });
         router.navigate(['/auth']);
         return of(false);
-      })
+      }),
     );
   }
 

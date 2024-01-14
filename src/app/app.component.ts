@@ -32,7 +32,7 @@ export class AppComponent implements OnInit {
         const paths = ['/auth', '/not-found'];
 
         return !paths.includes(routers.url);
-      })
+      }),
     );
   }
 }
