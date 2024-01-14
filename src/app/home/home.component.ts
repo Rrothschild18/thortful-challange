@@ -45,7 +45,7 @@ import { HomeState } from '../store/home/home.state';
                         {{ artist.name }}
                       </p>
                       <small class="text-gray fw-bold m-0"
-                        >1.1 mi followers</small
+                        >Popularity: {{ artist.popularity }}</small
                       >
                     </div>
                   </div>
@@ -87,7 +87,7 @@ import { HomeState } from '../store/home/home.state';
         .Scroll {
           width: 1200px;
           overflow-x: scroll;
-          height: 240px;
+          height: 250px;
 
           &::-webkit-scrollbar {
             width: 10px;

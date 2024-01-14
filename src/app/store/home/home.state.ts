@@ -13,6 +13,7 @@ const INITIAL_STATE: HomeStateModel = {
   genres: [],
   topArtists: [],
   selectedArtistId: '',
+  favoriteArtists: ['2KsP6tYLJlTBvSUxnwlVWa'],
   errors: {},
 };
 
@@ -30,6 +31,11 @@ export class HomeState {
   @Selector()
   public static topArtists(state: HomeStateModel): Artist[] {
     return state.topArtists;
+  }
+
+  @Selector()
+  public static favoriteArtists(state: HomeStateModel): string[] {
+    return state.favoriteArtists;
   }
 
   constructor(
@@ -180,6 +186,32 @@ export class HomeState {
   ): void {
     ctx.patchState({
       selectedArtistId: payload.artistId,
+    });
+  }
+
+  @Action(Home.AddFavoriteArtist)
+  onAddFavoriteArtist(
+    ctx: StateContext<HomeStateModel>,
+    payload: Home.AddFavoriteArtist,
+  ): void {
+    const state = ctx.getState();
+
+    ctx.patchState({
+      favoriteArtists: [...state.favoriteArtists, payload.artistId],
+    });
+  }
+
+  @Action(Home.RemoveFavoriteArtist)
+  onRemoveFavoriteArtist(
+    ctx: StateContext<HomeStateModel>,
+    payload: Home.RemoveFavoriteArtist,
+  ): void {
+    const state = ctx.getState();
+
+    ctx.patchState({
+      favoriteArtists: state.favoriteArtists.filter(
+        (id) => id !== payload.artistId,
+      ),
     });
   }
 }

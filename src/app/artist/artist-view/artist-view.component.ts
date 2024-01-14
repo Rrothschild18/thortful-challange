@@ -1,32 +1,40 @@
 import { AsyncPipe, DatePipe, JsonPipe, TitleCasePipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy,
   Component,
   Input,
   OnDestroy,
   OnInit,
+  Signal,
   inject,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Album, Artist as IArtist, Track } from '@models/index';
 import { Select, Store } from '@ngxs/store';
 import {
   BehaviorSubject,
   Observable,
   Subscription,
+  combineLatest,
   concatMap,
   filter,
   map,
   tap,
+  withLatestFrom,
 } from 'rxjs';
 import { Artist } from 'src/app/store/artist/artist.actions';
 import { FollowersCounterPipe } from './../../shared/pipes/followers-counter.pipe';
 import { ArtistState } from './../../store/artist/artist.state';
+import { Home } from './../../store/home/home.actions';
 
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
-import { RouterLink } from '@angular/router';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { RouterModule } from '@angular/router';
+import { HomeState } from 'src/app/store/home/home.state';
+
 @Component({
   selector: 'app-artist-view',
   standalone: true,
@@ -40,14 +48,11 @@ import { RouterLink } from '@angular/router';
     MatListModule,
     MatDividerModule,
     DatePipe,
-    RouterLink,
+    MatTooltipModule,
+    RouterModule,
   ],
   template: `
     <section class="ArtistView">
-      <!-- {{ artistId$ | async }}
-      {{ albums$ | async }}
-      {{ artists$ | async }}
- -->
       @if (artist$ | async; as artist) {
         <section class="Banner">
           <div
@@ -64,7 +69,9 @@ import { RouterLink } from '@angular/router';
               mollitia similique eveniet optio nihil repellendus fuga architecto
               tempore recusandae voluptatibus aut quasi eos suscipit!
             </p>
-            <div class="action-buttons mt-4">
+            <div
+              class="action-buttons mt-4 d-flex justify-content-start align-items-center"
+            >
               <button class="white me-2" mat-flat-button color="accent">
                 <p>Shuffle</p>
                 <mat-icon> shuffle </mat-icon>
@@ -77,6 +84,17 @@ import { RouterLink } from '@angular/router';
                 <small
                   >Follow {{ artist.followers.total | followersCounter }}</small
                 >
+              </button>
+
+              <button
+                mat-icon-button
+                color="accent"
+                [matTooltip]="(toolTipMessage$ | async) || ''"
+                (mouseenter)="onMouseEnter()"
+                (mouseleave)="onMouseLeave()"
+                (click)="favoriteArtist()"
+              >
+                <mat-icon>{{ icon$ | async }}</mat-icon>
               </button>
             </div>
           </div>
@@ -320,12 +338,16 @@ import { RouterLink } from '@angular/router';
       }
     `,
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  // changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ArtistViewComponent implements OnInit, OnDestroy {
-  #store = inject(Store);
-  #subSink = new Subscription();
-  artistId$ = new BehaviorSubject<string>('');
+  readonly #snackBar = inject(MatSnackBar);
+  readonly #store = inject(Store);
+  readonly #subSink = new Subscription();
+
+  protected artistId$ = new BehaviorSubject<string>('');
+  protected icon$ = new BehaviorSubject<string>('');
+  protected toolTipMessage$!: Observable<string>;
 
   @Select(ArtistState.artist)
   artist$!: Observable<IArtist>;
@@ -342,6 +364,23 @@ export class ArtistViewComponent implements OnInit, OnDestroy {
   @Select(ArtistState.artistName)
   artistName$!: Observable<string>;
 
+  @Select(HomeState.favoriteArtists)
+  favoriteArtist$!: Observable<string[]>;
+
+  protected isAnFavoriteArtist$: Observable<boolean> = combineLatest({
+    favoriteArtistFromStore: this.favoriteArtist$,
+    currentArtistId: this.artistId$,
+  }).pipe(
+    map(
+      ({ favoriteArtistFromStore, currentArtistId }) =>
+        !!favoriteArtistFromStore.find((id) => id === currentArtistId),
+    ),
+  );
+
+  protected isAnFavorite: Signal<boolean | undefined> = toSignal(
+    this.isAnFavoriteArtist$,
+  );
+
   @Input()
   set id(artistId: string) {
     this.artistId$.next(artistId);
@@ -351,6 +390,8 @@ export class ArtistViewComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.firstLoad();
+    this.checkFavoriteArtist();
+    this.setTooltipMessage();
   }
 
   ngOnDestroy(): void {
@@ -374,5 +415,59 @@ export class ArtistViewComponent implements OnInit, OnDestroy {
       .subscribe();
 
     this.#subSink.add(firstLoadSubscription);
+  }
+
+  onMouseEnter() {
+    const v = this.isAnFavorite();
+
+    debugger;
+
+    if (this.isAnFavorite()) {
+      this.icon$.next('star_half');
+      return;
+    }
+
+    this.icon$.next('star');
+  }
+
+  onMouseLeave() {
+    if (this.isAnFavorite()) {
+      this.icon$.next('star');
+      return;
+    }
+    this.icon$.next('star_half');
+  }
+
+  checkFavoriteArtist() {
+    this.isAnFavoriteArtist$ = this.favoriteArtist$.pipe(
+      withLatestFrom(this.artistId$),
+      map(
+        ([favoriteArtistsFromStore, currentArtistId]: [string[], string]) =>
+          !!favoriteArtistsFromStore.find((id) => id === currentArtistId),
+      ),
+    );
+  }
+
+  favoriteArtist() {
+    if (this.isAnFavorite()) {
+      this.#store.dispatch(
+        new Home.RemoveFavoriteArtist(this.artistId$.getValue()),
+      );
+
+      this.#snackBar.open('Artist removed from favorites', 'Ok');
+      return;
+    }
+
+    this.#store.dispatch(new Home.AddFavoriteArtist(this.artistId$.getValue()));
+    this.#snackBar.open('Artist added to favorites', 'Ok');
+  }
+
+  setTooltipMessage() {
+    this.toolTipMessage$ = this.isAnFavoriteArtist$.pipe(
+      tap((isFavorite) =>
+        isFavorite ? this.icon$.next('star') : this.icon$.next('star_half'),
+      ),
+      map((isFavorite) => (isFavorite ? 'Unfavorite' : 'Favorite')),
+    );
   }
 }

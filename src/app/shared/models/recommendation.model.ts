@@ -3,10 +3,10 @@ import { Market } from './index';
 export type SearchArtistParams = {
   q: string;
   type: ResourceType;
-  limit: number;
-  offset: number;
+  limit?: number;
+  offset?: number;
   include_external?: 'audio';
-  market: Market;
+  market?: Market;
 };
 
 export type ResourceType =

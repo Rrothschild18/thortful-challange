@@ -56,4 +56,13 @@ export namespace Home {
     public static readonly type = '[Home] Set current selected artistId';
     constructor(public artistId: string) {}
   }
+  export class AddFavoriteArtist {
+    public static readonly type = '[Home] Add a new favorite artist';
+    constructor(public artistId: string) {}
+  }
+
+  export class RemoveFavoriteArtist {
+    public static readonly type = '[Home] Remove a favorite artist';
+    constructor(public artistId: string) {}
+  }
 }

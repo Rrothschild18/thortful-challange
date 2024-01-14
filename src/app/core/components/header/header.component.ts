@@ -8,13 +8,14 @@ import {
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
+import { MatOptionSelectionChange } from '@angular/material/core';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { RouterLink } from '@angular/router';
-import { Artist, SearchArtistParams, SearchResponse } from '@models/index';
+import { Router, RouterLink } from '@angular/router';
+import { Artist, SearchResponse } from '@models/index';
 import { Select, Store } from '@ngxs/store';
 import { RecommendationsService } from '@services/index';
 import {
@@ -53,12 +54,11 @@ import { UserState } from 'src/app/store/user/user.state';
           <mat-icon>menu</mat-icon>
         </button>
         <a class="d-flex align-items-center" [routerLink]="['/home']">
-          <picture>
-            <img
-              alt="Youtube Music Logo"
-              src="https://music.youtube.com/img/on_platform_logo_dark.svg"
-            /> </picture
-        ></a>
+          <img
+            alt="Youtube Music Logo"
+            src="https://music.youtube.com/img/on_platform_logo_dark.svg"
+          />
+        </a>
       </div>
 
       <div
@@ -83,7 +83,11 @@ import { UserState } from 'src/app/store/user/user.state';
 
         <mat-autocomplete #auto="matAutocomplete">
           @for (artist of userSearchResults$ | async; track artist.id) {
-            <mat-option [routerLink]="['/artist', artist.id]">
+            <mat-option
+              [routerLink]="['/artist', artist.id]"
+              [value]="artist.id"
+              (onSelectionChange)="redirectToArtistView($event)"
+            >
               <div class="d-flex align-items-center">
                 @if (artist.images[0]; as image) {
                   <img
@@ -110,7 +114,7 @@ import { UserState } from 'src/app/store/user/user.state';
             </mat-option>
           } @empty {
             <!-- {{}} -->
-            @if (userSearchControl.value || ''.length > 3) {
+            @if (userSearchControl.value.length > 3) {
               <mat-option> No artists have been found </mat-option>
             }
           }
@@ -137,8 +141,11 @@ import { UserState } from 'src/app/store/user/user.state';
   styles: [
     `
       .Header {
-        input:focus {
-          outline: none;
+        input {
+          color: #fff;
+          &:focus {
+            outline: none;
+          }
         }
 
         .input-search-container {
@@ -180,8 +187,11 @@ import { UserState } from 'src/app/store/user/user.state';
 })
 export class HeaderComponent implements OnInit {
   #store = inject(Store);
+  #router = inject(Router);
   #recommendationService = inject(RecommendationsService);
-  protected userSearchControl = new FormControl('');
+  protected userSearchControl = new FormControl<string>('', {
+    nonNullable: true,
+  });
   protected userSearchResults$!: Observable<Artist[]>;
   protected focus$ = new BehaviorSubject<boolean>(false);
 
@@ -196,6 +206,13 @@ export class HeaderComponent implements OnInit {
     this.onUserSearch();
   }
 
+  redirectToArtistView(event: MatOptionSelectionChange<string>): void {
+    const { value } = event.source;
+
+    this.userSearchControl.setValue('');
+    this.#router.navigate(['/artist', value]);
+  }
+
   toggleSidebar() {
     this.#store.dispatch(new Layout.ToggleSidebar());
   }
@@ -205,27 +222,16 @@ export class HeaderComponent implements OnInit {
       .pipe(
         startWith(''),
         debounceTime(500),
-        filter((query) => query!.length > 3),
+        filter((query) => query!?.length > 3),
         distinctUntilChanged(),
-        switchMap((query) => {
-          const currentUserMarket =
-            this.#store.selectSnapshot(UserState).country;
-          const params: SearchArtistParams = {
-            q: query ?? '',
+        switchMap((query) =>
+          this.#recommendationService.searchArtist({
+            q: query,
             type: 'artist',
-            limit: 10,
-            offset: 10,
-            market: currentUserMarket ?? 'US',
-          };
-
-          return this.#recommendationService.searchArtist(params);
-        }),
+          }),
+        ),
       )
-      .pipe(
-        map((response: SearchResponse) => {
-          return response.artists['items'];
-        }),
-      );
+      .pipe(map((response: SearchResponse) => response.artists['items']));
   }
 
   addFocusStyle() {
