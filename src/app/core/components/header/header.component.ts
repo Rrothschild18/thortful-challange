@@ -1,12 +1,32 @@
-import { AsyncPipe, JsonPipe, NgIf } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { AsyncPipe, JsonPipe } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  inject,
+} from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterLink } from '@angular/router';
+import { Artist, SearchArtistParams, SearchResponse } from '@models/index';
 import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { RecommendationsService } from '@services/index';
+import {
+  BehaviorSubject,
+  Observable,
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  map,
+  startWith,
+  switchMap,
+} from 'rxjs';
 import { Layout } from 'src/app/store/layout/layout.actions';
 import { UserState } from 'src/app/store/user/user.state';
 
@@ -20,8 +40,11 @@ import { UserState } from 'src/app/store/user/user.state';
     MatDividerModule,
     AsyncPipe,
     JsonPipe,
-    NgIf,
     RouterLink,
+    MatAutocompleteModule,
+    MatInputModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
   ],
   template: ` <section class="Header justify-content-between">
     <mat-toolbar class="w-100 ">
@@ -36,6 +59,62 @@ import { UserState } from 'src/app/store/user/user.state';
               src="https://music.youtube.com/img/on_platform_logo_dark.svg"
             /> </picture
         ></a>
+      </div>
+
+      <div
+        class="input-search-container d-flex align-items-center"
+        [style]="
+          (focus$ | async)
+            ? { border: 'solid 1px #292929' }
+            : { 'border-color': ' solid 1px  transparent' }
+        "
+      >
+        <mat-icon class="px-4"> search </mat-icon>
+        <input
+          class="search"
+          matInput
+          type="text"
+          [matAutocomplete]="auto"
+          placeholder="Search"
+          [formControl]="userSearchControl"
+          (focus)="addFocusStyle()"
+          (blur)="removeFocusStyle()"
+        />
+
+        <mat-autocomplete #auto="matAutocomplete">
+          @for (artist of userSearchResults$ | async; track artist.id) {
+            <mat-option [routerLink]="['/artist', artist.id]">
+              <div class="d-flex align-items-center">
+                @if (artist.images[0]; as image) {
+                  <img
+                    [style.height]="'30px'"
+                    [style.width]="'30px'"
+                    [style.border-radius]="'50%'"
+                    [src]="image.url"
+                    class="search-avatar"
+                  />
+                } @else {
+                  <div
+                    class="d-flex justify-content-center align-items-center"
+                    [style.height]="'30px'"
+                    [style.width]="'30px'"
+                    [style.border-radius]="'50%'"
+                    [style.border]="'1px solid #fff'"
+                  >
+                    <mat-icon class="m-0"> person </mat-icon>
+                  </div>
+                }
+
+                <small class="ms-4">{{ artist.name }}</small>
+              </div>
+            </mat-option>
+          } @empty {
+            <!-- {{}} -->
+            @if (userSearchControl.value || ''.length > 3) {
+              <mat-option> No artists have been found </mat-option>
+            }
+          }
+        </mat-autocomplete>
       </div>
 
       <div class="d-flex align-items-center">
@@ -58,6 +137,28 @@ import { UserState } from 'src/app/store/user/user.state';
   styles: [
     `
       .Header {
+        input:focus {
+          outline: none;
+        }
+
+        .input-search-container {
+          width: 30%;
+          border-radius: 8px;
+          background-color: #292929;
+          border-color: unset;
+          height: 40px;
+
+          .search {
+            width: 450px;
+            background-color: transparent;
+            border: 0;
+          }
+        }
+        .search-avatar {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+        }
         .mat-divider {
           border-top-color: #3d3d3d !important;
         }
@@ -77,8 +178,12 @@ import { UserState } from 'src/app/store/user/user.state';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
   #store = inject(Store);
+  #recommendationService = inject(RecommendationsService);
+  protected userSearchControl = new FormControl('');
+  protected userSearchResults$!: Observable<Artist[]>;
+  protected focus$ = new BehaviorSubject<boolean>(false);
 
   @Select(UserState.profileImage)
   profileImage$!: Observable<{
@@ -87,7 +192,47 @@ export class HeaderComponent {
     width: number;
   }>;
 
+  ngOnInit() {
+    this.onUserSearch();
+  }
+
   toggleSidebar() {
     this.#store.dispatch(new Layout.ToggleSidebar());
+  }
+
+  onUserSearch() {
+    this.userSearchResults$ = this.userSearchControl.valueChanges
+      .pipe(
+        startWith(''),
+        debounceTime(500),
+        filter((query) => query!.length > 3),
+        distinctUntilChanged(),
+        switchMap((query) => {
+          const currentUserMarket =
+            this.#store.selectSnapshot(UserState).country;
+          const params: SearchArtistParams = {
+            q: query ?? '',
+            type: 'artist',
+            limit: 10,
+            offset: 10,
+            market: currentUserMarket ?? 'US',
+          };
+
+          return this.#recommendationService.searchArtist(params);
+        }),
+      )
+      .pipe(
+        map((response: SearchResponse) => {
+          return response.artists['items'];
+        }),
+      );
+  }
+
+  addFocusStyle() {
+    this.focus$.next(true);
+  }
+
+  removeFocusStyle() {
+    this.focus$.next(false);
   }
 }
