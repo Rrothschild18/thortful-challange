@@ -20,7 +20,7 @@ import { HomeState } from '../store/home/home.state';
   template: `
     <section class="Home">
       <section class="container">
-        <h1>Favorite artists</h1>
+        <h1 class="my-10">Recommended artists</h1>
         <div class="Scroll d-flex flex-nowrap mt-10">
           @if (artists$ | async; as artists) {
             @for (artist of artists; track artist.uri) {
@@ -51,6 +51,43 @@ import { HomeState } from '../store/home/home.state';
                   </div>
                 </div>
               </a>
+            }
+          }
+        </div>
+
+        <h1 class="my-10">Favorite artists</h1>
+        <div class="Scroll d-flex flex-nowrap mt-10">
+          @if (favoriteArtists$ | async; as favoriteArtists) {
+            @for (favoriteArtist of favoriteArtists; track favoriteArtist.uri) {
+              <a
+                class="text-decoration-none"
+                [routerLink]="[
+                  '/home',
+                  {
+                    outlets: {
+                      overview: ['artist-overview', favoriteArtist.id]
+                    }
+                  }
+                ]"
+                (click)="selectCurrentArtist(favoriteArtist.id)"
+              >
+                <div class="Artist me-4">
+                  <div class="content">
+                    <img src="{{ favoriteArtist.images[0].url }}" />
+
+                    <div class="d-flex flex-column align-items-center">
+                      <p class="text-white fw-bold m-0 mt-2">
+                        {{ favoriteArtist.name }}
+                      </p>
+                      <small class="text-gray fw-bold m-0"
+                        >Popularity: {{ favoriteArtist.popularity }}</small
+                      >
+                    </div>
+                  </div>
+                </div>
+              </a>
+            } @empty {
+              <h4>No favorite artists</h4>
             }
           }
         </div>
@@ -87,7 +124,7 @@ import { HomeState } from '../store/home/home.state';
         .Scroll {
           width: 1200px;
           overflow-x: scroll;
-          height: 250px;
+          height: 270px;
 
           &::-webkit-scrollbar {
             width: 10px;
@@ -133,6 +170,9 @@ import { HomeState } from '../store/home/home.state';
 export class HomeComponent implements OnInit {
   readonly #store = inject(Store);
 
+  @Select(HomeState.favoriteArtists)
+  favoriteArtists$!: Observable<Artist[]>;
+
   @Select(HomeState.genres)
   genres$!: Observable<string[]>;
 
@@ -141,6 +181,9 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.#store.dispatch(new Home.FirstLoad());
+    this.#store.select(HomeState).subscribe((v) => {
+      v;
+    });
   }
 
   selectCurrentArtist(id: string) {

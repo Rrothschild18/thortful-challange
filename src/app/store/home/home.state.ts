@@ -1,8 +1,8 @@
 import { HttpStatusCode } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Artist, TopItemsList } from '@models/index';
+import { Artist, ArtistList, TopItemsList } from '@models/index';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { UserService } from '@services/index';
+import { ArtistService, UserService } from '@services/index';
 import { Observable, catchError, of, tap } from 'rxjs';
 import { Genres, GenresFromApi } from 'src/app/home/services/genres.model';
 import { GenresService } from 'src/app/home/services/genres.service';
@@ -13,7 +13,8 @@ const INITIAL_STATE: HomeStateModel = {
   genres: [],
   topArtists: [],
   selectedArtistId: '',
-  favoriteArtists: ['2KsP6tYLJlTBvSUxnwlVWa'],
+  favoriteArtistsIds: [],
+  favoriteArtists: [],
   errors: {},
 };
 
@@ -23,6 +24,8 @@ const INITIAL_STATE: HomeStateModel = {
 })
 @Injectable()
 export class HomeState {
+  localStorage: Storage = window.localStorage;
+
   @Selector()
   public static genres(state: HomeStateModel): Genres[] {
     return state.genres;
@@ -34,13 +37,20 @@ export class HomeState {
   }
 
   @Selector()
-  public static favoriteArtists(state: HomeStateModel): string[] {
+  public static favoriteArtists(state: HomeStateModel): Artist[] {
+    console.log({ v: state.favoriteArtists });
     return state.favoriteArtists;
+  }
+
+  @Selector()
+  public static favoriteArtistsIds(state: HomeStateModel): string[] {
+    return state.favoriteArtistsIds;
   }
 
   constructor(
     private userService: UserService,
     private genresService: GenresService,
+    private artistService: ArtistService,
   ) {}
 
   @Action(Home.FirstLoad)
@@ -53,6 +63,14 @@ export class HomeState {
         time_range: 'medium_term',
       }),
     );
+
+    ctx.dispatch(
+      new Home.RestoreFavoriteArtist(
+        JSON.parse(this.localStorage.getItem('favoriteArtistsIds')! ?? []),
+      ),
+    );
+
+    ctx.dispatch(new Home.FetchFavoriteArtists());
   }
 
   /** Genres */
@@ -160,6 +178,11 @@ export class HomeState {
     ctx: StateContext<HomeStateModel>,
     payload: Home.FetchTopArtistsSuccess,
   ): void {
+    const state = ctx.getState();
+    const ids = state.topArtists.map((artist) => artist.id);
+
+    ctx.dispatch(new Home.RestoreFavoriteArtist(ids));
+
     ctx.patchState({
       topArtists: payload.response.items,
     });
@@ -194,11 +217,18 @@ export class HomeState {
     ctx: StateContext<HomeStateModel>,
     payload: Home.AddFavoriteArtist,
   ): void {
-    const state = ctx.getState();
+    let state = ctx.getState();
 
     ctx.patchState({
-      favoriteArtists: [...state.favoriteArtists, payload.artistId],
+      favoriteArtistsIds: [...state.favoriteArtistsIds, payload.artistId],
     });
+
+    state = ctx.getState();
+
+    this.localStorage.setItem(
+      'favoriteArtistsIds',
+      JSON.stringify(state.favoriteArtistsIds),
+    );
   }
 
   @Action(Home.RemoveFavoriteArtist)
@@ -206,12 +236,68 @@ export class HomeState {
     ctx: StateContext<HomeStateModel>,
     payload: Home.RemoveFavoriteArtist,
   ): void {
-    const state = ctx.getState();
+    let state = ctx.getState();
 
     ctx.patchState({
-      favoriteArtists: state.favoriteArtists.filter(
+      favoriteArtistsIds: state.favoriteArtistsIds.filter(
         (id) => id !== payload.artistId,
       ),
+    });
+
+    state = ctx.getState();
+
+    this.localStorage.setItem(
+      'favoriteArtistsIds',
+      JSON.stringify(state.favoriteArtistsIds),
+    );
+  }
+
+  @Action(Home.RestoreFavoriteArtist)
+  onRestoreFavoriteArtists(
+    ctx: StateContext<HomeStateModel>,
+    payload: Home.RestoreFavoriteArtist,
+  ): void {
+    ctx.patchState({
+      favoriteArtistsIds: payload.artistsId,
+    });
+  }
+
+  @Action(Home.FetchFavoriteArtists)
+  onFetchFavoriteArtists(
+    ctx: StateContext<HomeStateModel>,
+  ): Observable<ArtistList> {
+    const state = ctx.getState();
+
+    return this.artistService.getSeveralArtists(state.favoriteArtistsIds).pipe(
+      catchError((err) => {
+        ctx.dispatch(new Home.FetchFavoriteArtistsFailed({ error: err }));
+        if (err.status === HttpStatusCode.TooManyRequests) {
+          // return mock artists
+        }
+        return of({
+          href: '',
+          limit: 0,
+          next: 0,
+          offset: 0,
+          previous: '',
+          total: 0,
+          items: [],
+        } as unknown as ArtistList);
+      }),
+      tap((response) =>
+        ctx.dispatch(new Home.FetchFavoriteArtistsSuccess(response)),
+      ),
+    );
+  }
+
+  @Action(Home.FetchFavoriteArtistsSuccess)
+  onFetchFavoriteArtistsSuccess(
+    ctx: StateContext<HomeStateModel>,
+    payload: Home.FetchFavoriteArtistsSuccess,
+  ): void {
+    debugger;
+    ctx.patchState({
+      favoriteArtists: payload.payload.artists || [],
     });
   }
 }

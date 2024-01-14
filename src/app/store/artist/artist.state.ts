@@ -8,6 +8,7 @@ import {
 import { Action, Selector, State, StateContext } from '@ngxs/store';
 import { ArtistService } from '@services/artist.service';
 import { Observable, catchError, of, tap } from 'rxjs';
+import { Home } from '../home/home.actions';
 import { Artist } from './artist.actions';
 import { ArtistStateModel } from './artist.model';
 
@@ -42,6 +43,8 @@ const INITIAL_STATE: ArtistStateModel = {
 })
 @Injectable()
 export class ArtistState {
+  localStorage: Storage = window.localStorage;
+
   constructor(private artistService: ArtistService) {}
 
   @Selector()
@@ -70,6 +73,11 @@ export class ArtistState {
 
   @Action(Artist.FirstLoadSingle)
   onFirstLoadSingle(ctx: StateContext<ArtistStateModel>): void {
+    ctx.dispatch(
+      new Home.RestoreFavoriteArtist(
+        JSON.parse(this.localStorage.getItem('favoriteArtistsIds')! ?? []),
+      ),
+    );
     ctx.dispatch(new Artist.FetchArtist());
     ctx.dispatch(new Artist.FetchAlbums());
     ctx.dispatch(new Artist.FetchRelated());

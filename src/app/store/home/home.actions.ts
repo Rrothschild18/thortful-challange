@@ -1,4 +1,4 @@
-import { TopItemsList, UserTopItemsParams } from '@models/index';
+import { ArtistList, TopItemsList, UserTopItemsParams } from '@models/index';
 import { Genres } from 'src/app/home/services/genres.model';
 
 export namespace Home {
@@ -22,6 +22,8 @@ export namespace Home {
       '[Home] Fetch  user top artists occurred an error';
   }
 
+  /** Ent Top Artist */
+
   /** Artist */
   export class FetchSingleArtist {
     public static readonly type = '[Home] Fetch user top artists';
@@ -36,6 +38,8 @@ export namespace Home {
       '[Home] Fetch a single artist occurred an error';
     constructor(public payload: { error: Record<string, any> }) {}
   }
+
+  /** End Artist */
 
   /** Genres */
   export class FetchMusicGenres {
@@ -52,6 +56,8 @@ export namespace Home {
     constructor(public payload: { error: Record<string, any> }) {}
   }
 
+  /** End Genres */
+
   export class SetCurrentSelectedArtistId {
     public static readonly type = '[Home] Set current selected artistId';
     constructor(public artistId: string) {}
@@ -64,5 +70,26 @@ export namespace Home {
   export class RemoveFavoriteArtist {
     public static readonly type = '[Home] Remove a favorite artist';
     constructor(public artistId: string) {}
+  }
+
+  export class RestoreFavoriteArtist {
+    public static readonly type =
+      '[Home] Restore favorite artists from local storage';
+    constructor(public artistsId: string[]) {}
+  }
+
+  /** Favorite Artists */
+
+  export class FetchFavoriteArtists {
+    public static readonly type = '[Home] Fetch favorite artists';
+    constructor() {}
+  }
+  export class FetchFavoriteArtistsSuccess {
+    public static readonly type = '[Home] Fetch favorite artist success';
+    constructor(public payload: ArtistList) {}
+  }
+  export class FetchFavoriteArtistsFailed {
+    public static readonly type = '[Home] Fetch favorite artists failed';
+    constructor(public payload: { error: Record<string, any> }) {}
   }
 }
