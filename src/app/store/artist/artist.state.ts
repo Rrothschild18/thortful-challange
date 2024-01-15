@@ -73,11 +73,10 @@ export class ArtistState {
 
   @Action(Artist.FirstLoadSingle)
   onFirstLoadSingle(ctx: StateContext<ArtistStateModel>): void {
-    ctx.dispatch(
-      new Home.RestoreFavoriteArtist(
-        JSON.parse(this.localStorage.getItem('favoriteArtistsIds')! ?? []),
-      ),
-    );
+    const ids = this.localStorage.getItem('favoriteArtistsIds')! ?? [];
+    const favoriteArtistsIds = JSON.parse(ids);
+
+    ctx.dispatch(new Home.RestoreFavoriteArtist(favoriteArtistsIds));
     ctx.dispatch(new Artist.FetchArtist());
     ctx.dispatch(new Artist.FetchAlbums());
     ctx.dispatch(new Artist.FetchRelated());
