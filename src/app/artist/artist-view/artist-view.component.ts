@@ -438,6 +438,9 @@ export class ArtistViewComponent implements OnInit, OnDestroy {
   checkFavoriteArtist() {
     this.isAnFavoriteArtist$ = this.favoriteArtistIds$.pipe(
       withLatestFrom(this.artistId$),
+      tap((v) => {
+        debugger;
+      }),
       map(
         ([favoriteArtistsFromStore, currentArtistId]: [string[], string]) =>
           !!favoriteArtistsFromStore.find((id) => id === currentArtistId),
