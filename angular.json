@@ -52,7 +52,13 @@
                 "includePaths": [
                   "src", "./node_modules"
                 ]
-              }
+              },
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.development.ts",
+                  "with": "src/environments/environment.ts"
+                }
+              ]
             },
             "development": {
               "optimization": false,
