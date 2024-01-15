@@ -14,6 +14,7 @@ import { SharedModule } from './shared/shared.module';
 })
 export class AppComponent implements OnInit {
   title = 'thortful-challange';
+  localStorage: Storage = window.localStorage;
 
   #router = inject(Router);
   isLoginRoute$!: Observable<boolean>;
@@ -22,7 +23,15 @@ export class AppComponent implements OnInit {
     this.hideMenuByUrl();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    const ids = this.localStorage.getItem('favoriteArtistsIds')! ?? [];
+    const parsedIds = JSON.parse(ids);
+    debugger;
+
+    if (!parsedIds.length) {
+      this.localStorage.setItem('favoriteArtistsIds', JSON.stringify([]));
+    }
+  }
 
   hideMenuByUrl() {
     this.isLoginRoute$ = this.#router.events.pipe(
@@ -32,7 +41,7 @@ export class AppComponent implements OnInit {
         const paths = ['/auth', '/not-found'];
 
         return !paths.includes(routers.url);
-      }),
+      })
     );
   }
 }
