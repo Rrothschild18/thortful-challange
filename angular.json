@@ -28,7 +28,7 @@
             "assets": ["src/favicon.ico", "src/assets"],
             "styles": [
               "@angular/material/prebuilt-themes/indigo-pink.css",
-              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "src/styles/main.scss",
               "src/styles.scss"
             ],
             "scripts": []
@@ -47,7 +47,12 @@
                   "maximumError": "4kb"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "stylePreprocessorOptions": {
+                "includePaths": [
+                  "src", "./node_modules"
+                ]
+              }
             },
             "development": {
               "optimization": false,
@@ -96,6 +101,7 @@
           }
         }
       }
+
     }
   },
   "cli": {
