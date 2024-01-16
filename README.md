@@ -38,7 +38,7 @@ export const environment = {
   ],
 };
 ```
-Step 3 - run `npm i` inside the `cloned project folder`
+Step 3 - run `git clone` inside your desired projects path then `npm i` inside the `cloned project folder`
 
 Sep 4 - run `ng serve --configuration development`
 
@@ -52,4 +52,11 @@ Sep 4 - run `ng serve --configuration development`
 `ArtistView` => A single page where full informations about the artists can be seen
 
 `SearchBar` => A input where user can search for his favorite artist and then be redirected to it view page.
+
+### Cool insigths from WakaTime
+
+![image](https://github.com/Rrothschild18/thortful-challange/assets/39390678/761e44f7-e864-4dd7-8ce5-98cfbe390764)
+
+[Full Wakatime report](https://wakatime.com/@a39ff5ab-74f7-4901-a557-16cdd312074f/projects/qtehduwucw?start=2024-01-08&end=2024-01-14) 
+
 
