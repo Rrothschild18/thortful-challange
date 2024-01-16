@@ -24,12 +24,12 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const ids = this.localStorage.getItem('favoriteArtistsIds')! ?? [];
-    const parsedIds = JSON.parse(ids);
-    debugger;
+    const localStorageData = this.localStorage.getItem('favoriteArtistsIds');
+    const parsedIds = JSON.parse(localStorageData!)?.favoriteArtistsIds ?? [];
 
     if (!parsedIds.length) {
-      this.localStorage.setItem('favoriteArtistsIds', JSON.stringify([]));
+      const idsToAdd = JSON.stringify({ favoriteArtistsIds: [] });
+      this.localStorage.setItem('favoriteArtistsIds', idsToAdd);
     }
   }
 

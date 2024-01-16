@@ -83,56 +83,53 @@ import { UserState } from 'src/app/store/user/user.state';
 
         <mat-autocomplete #auto="matAutocomplete">
           @for (artist of userSearchResults$ | async; track artist.id) {
-            <mat-option
-              [routerLink]="['/artist', artist.id]"
-              [value]="artist.id"
-              (onSelectionChange)="redirectToArtistView($event)"
-            >
-              <div class="d-flex align-items-center">
-                @if (artist.images[0]; as image) {
-                  <img
-                    [style.height]="'30px'"
-                    [style.width]="'30px'"
-                    [style.border-radius]="'50%'"
-                    [src]="image.url"
-                    class="search-avatar"
-                  />
-                } @else {
-                  <div
-                    class="d-flex justify-content-center align-items-center"
-                    [style.height]="'30px'"
-                    [style.width]="'30px'"
-                    [style.border-radius]="'50%'"
-                    [style.border]="'1px solid #fff'"
-                  >
-                    <mat-icon class="m-0"> person </mat-icon>
-                  </div>
-                }
-
-                <small class="ms-4">{{ artist.name }}</small>
+          <mat-option
+            [routerLink]="['/artist', artist.id]"
+            [value]="artist.id"
+            (onSelectionChange)="redirectToArtistView($event)"
+          >
+            <div class="d-flex align-items-center">
+              @if (artist.images[0]; as image) {
+              <img
+                [style.height]="'30px'"
+                [style.width]="'30px'"
+                [style.border-radius]="'50%'"
+                [src]="image.url"
+                class="search-avatar"
+              />
+              } @else {
+              <div
+                class="d-flex justify-content-center align-items-center"
+                [style.height]="'30px'"
+                [style.width]="'30px'"
+                [style.border-radius]="'50%'"
+                [style.border]="'1px solid #fff'"
+              >
+                <mat-icon class="m-0"> person </mat-icon>
               </div>
-            </mat-option>
-          } @empty {
-            <!-- {{}} -->
-            @if (userSearchControl.value.length > 3) {
-              <mat-option> No artists have been found </mat-option>
-            }
-          }
+              }
+
+              <small class="ms-4">{{ artist.name }}</small>
+            </div>
+          </mat-option>
+          } @empty { @if (userSearchControl.value.length > 3) {
+          <mat-option> No artists have been found </mat-option>
+          } }
         </mat-autocomplete>
       </div>
 
       <div class="d-flex align-items-center">
         @if (profileImage$ | async; as profileImage) {
-          <button mat-icon-button class="me-3" (click)="toggleSidebar()">
-            <mat-icon>cast</mat-icon>
-          </button>
-          <img matRipple class="avatar" [src]="profileImage.url" />
+        <button mat-icon-button class="me-3" (click)="toggleSidebar()">
+          <mat-icon>cast</mat-icon>
+        </button>
+        <img matRipple class="avatar" [src]="profileImage.url" />
         } @else {
-          <img
-            matRipple
-            class="avatar"
-            src="https://www.alura.com.br/artigos/assets/novidades-angular-17/imagem1.gif"
-          />
+        <img
+          matRipple
+          class="avatar"
+          src="https://www.alura.com.br/artigos/assets/novidades-angular-17/imagem1.gif"
+        />
         }
       </div>
     </mat-toolbar>
@@ -228,8 +225,8 @@ export class HeaderComponent implements OnInit {
           this.#recommendationService.searchArtist({
             q: query,
             type: 'artist',
-          }),
-        ),
+          })
+        )
       )
       .pipe(map((response: SearchResponse) => response.artists['items']));
   }

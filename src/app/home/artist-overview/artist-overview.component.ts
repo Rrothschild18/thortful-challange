@@ -44,65 +44,61 @@ import { SharedModule } from '../../shared/shared.module';
       </div>
       <div class="d-flex flex-column p-5">
         @if (artist$ | async; as artist) {
-          <div class="Artist">
-            <div
-              class="content w-100 d-flex flex-column justify-content-center align-items-center w-100"
-            >
-              <img class="artist_photo" src="{{ artist.images[0].url }}" />
+        <div class="Artist">
+          <div
+            class="content w-100 d-flex flex-column justify-content-center align-items-center w-100"
+          >
+            <img class="artist_photo" src="{{ artist.images[0].url }}" />
 
-              <div class="d-flex flex-column align-items-center w-100">
-                <p class="text-white fw-bold m-0 mt-2">
-                  {{ artist.name }}
-                </p>
-                <small class="text-gray fw-bold m-0 ">
-                  {{ artist.followers.total | followersCounter }}
-                  followers</small
+            <div class="d-flex flex-column align-items-center w-100">
+              <p class="text-white fw-bold m-0 mt-2">
+                {{ artist.name }}
+              </p>
+              <small class="text-gray fw-bold m-0 ">
+                {{ artist.followers.total | followersCounter }}
+                followers</small
+              >
+
+              <div class="mt-3 w-100">
+                <small class="fw-bold  d-block section-title mb-2"
+                  >Genres</small
                 >
-
-                <div class="mt-3 w-100">
-                  <small class="fw-bold  d-block section-title mb-2"
-                    >Genres</small
+                <div class="d-flex flex-wrap align-items-start">
+                  @for (genre of artist.genres; track genre) {
+                  <mat-chip-option
+                    class="me-1 mb-1"
+                    color="warn"
+                    [selectable]="false"
+                    >{{ genre | titlecase }}</mat-chip-option
                   >
-                  <div class="d-flex flex-wrap align-items-start">
-                    @for (genre of artist.genres; track genre) {
-                      <mat-chip-option
-                        class="me-1 mb-1"
-                        color="warn"
-                        [selectable]="false"
-                        >{{ genre | titlecase }}</mat-chip-option
-                      >
-                    } @empty {
-                      <p>No genres to be displayed</p>
-                    }
-                  </div>
+                  } @empty {
+                  <p>No genres to be displayed</p>
+                  }
                 </div>
               </div>
             </div>
           </div>
+        </div>
         }
         <div class="mt-3">
           <section class="Album">
             <small class="fw-bold d-block section-title mb-2">Top albums</small>
             <div class="row">
-              @if (artistTopAlbums$ | async; as topAlbums) {
-                @for (album of topAlbums.items; track album) {
-                  <div class="col">
-                    <div class=" album_cover_photo">
-                      <img
-                        class="album_cover_photo"
-                        [src]="album.images[0].url"
-                      />
-                      <div class="mt-2">
-                        <p class="text-white fw-bold m-0 album-title">
-                          {{ album.name }}
-                        </p>
-                      </div>
-                    </div>
+              @if (artistTopAlbums$ | async; as topAlbums) { @for (album of
+              topAlbums.items; track album) {
+              <div class="col">
+                <div class=" album_cover_photo">
+                  <img class="album_cover_photo" [src]="album.images[0].url" />
+                  <div class="mt-2">
+                    <p class="text-white fw-bold m-0 album-title">
+                      {{ album.name }}
+                    </p>
                   </div>
-                } @empty {
-                  <p>No albums to be displayed</p>
-                }
-              }
+                </div>
+              </div>
+              } @empty {
+              <p>No albums to be displayed</p>
+              } }
             </div>
           </section>
         </div>
@@ -132,7 +128,7 @@ import { SharedModule } from '../../shared/shared.module';
         }
 
         .details {
-          height: 25px;
+          height: 21px;
         }
 
         .Artist {
@@ -226,7 +222,7 @@ export class ArtistOverviewComponent implements OnInit {
       filter((value) => !!value.length),
       concatMap((artistId) => {
         return this.#artistService.getOneArtist(artistId);
-      }),
+      })
     );
   }
 
@@ -241,7 +237,7 @@ export class ArtistOverviewComponent implements OnInit {
           market: 'US',
           type: 'tracks',
         });
-      }),
+      })
     );
   }
 

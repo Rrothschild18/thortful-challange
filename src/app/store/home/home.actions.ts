@@ -56,6 +56,18 @@ export namespace Home {
     constructor(public payload: { error: Record<string, any> }) {}
   }
 
+  export class SelectGenre {
+    public static readonly type =
+      '[Home] Select music genre for recommendation';
+    constructor(public genre: string) {}
+  }
+
+  export class UnselectGenre {
+    public static readonly type =
+      '[Home] Unelect music genre for recommendation';
+    constructor(public genre: string) {}
+  }
+
   /** End Genres */
 
   export class SetCurrentSelectedArtistId {
@@ -92,4 +104,22 @@ export namespace Home {
     public static readonly type = '[Home] Fetch favorite artists failed';
     constructor(public payload: { error: Record<string, any> }) {}
   }
+
+  /** End Artists */
+
+  /** Recommended Artists */
+  export class FetchRecommendedArtists {
+    public static readonly type = '[Home] Fetch recommended artists';
+    constructor() {}
+  }
+  export class FetchRecommendedArtistsSuccess {
+    public static readonly type = '[Home] Fetch recommended artist success';
+    constructor(public payload: ArtistList) {}
+  }
+  export class FetchRecommendedArtistsFailed {
+    public static readonly type = '[Home] Fetch recommended artists failed';
+    constructor(public payload: { error: Record<string, any> }) {}
+  }
+
+  /** End Recommend  */
 }
