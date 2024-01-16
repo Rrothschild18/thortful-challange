@@ -5,23 +5,114 @@ import {
   OnInit,
   inject,
 } from '@angular/core';
-import { MatChipsModule } from '@angular/material/chips';
+import {
+  MatChipSelectionChange,
+  MatChipsModule,
+} from '@angular/material/chips';
+import { MatRippleModule } from '@angular/material/core';
+import { MatDividerModule } from '@angular/material/divider';
 import { RouterModule } from '@angular/router';
 import { Artist } from '@models/artist.model';
+import { Track } from '@models/index';
 import { Select, Store } from '@ngxs/store';
-import { Observable } from 'rxjs';
+import { ArtistService } from '@services/index';
+import { RecommendationsService } from '@services/recommendations.service';
+import {
+  Observable,
+  map,
+  shareReplay,
+  switchMap,
+  tap,
+  withLatestFrom,
+} from 'rxjs';
 import { Home } from '../store/home/home.actions';
 import { HomeState } from '../store/home/home.state';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [AsyncPipe, JsonPipe, MatChipsModule, TitleCasePipe, RouterModule],
+  imports: [
+    AsyncPipe,
+    JsonPipe,
+    MatChipsModule,
+    TitleCasePipe,
+    RouterModule,
+    MatRippleModule,
+    MatDividerModule,
+  ],
   template: `
     <section class="Home">
       <section class="container">
-        <h1 class="my-10">Recommended artists</h1>
-        <div class="Scroll d-flex flex-nowrap mt-10">
+        <section class="my-6">
+          <h1 class="mb-6 fs-500">Recommended artists</h1>
+
+          @if ((selectedGenres$ | async) || []; as selectedGenres) {
+            <mat-chip-listbox
+              aria-label="Genres selection"
+              class="mt-5"
+              [multiple]="true"
+            >
+              @for (genre of genres$ | async; track genre) {
+                <mat-chip-option
+                  color="accent"
+                  [selected]="selectedGenres.includes(genre)"
+                  (selectionChange)="onSelectGenre($event, genre)"
+                  >{{ genre | titlecase }}</mat-chip-option
+                >
+              }
+            </mat-chip-listbox>
+          }
+
+          <div class="d-flex my-10">
+            @defer (when recommendedArtists$ | async) {
+              <!-- <h1> -->
+              @if (recommendedArtists$ | async; as recommendedArtists) {
+                @for (
+                  recommendedArtist of recommendedArtists;
+                  track recommendedArtist.id
+                ) {
+                  <a
+                    class="text-decoration-none"
+                    [routerLink]="[
+                      '/home',
+                      {
+                        outlets: {
+                          overview: ['artist-overview', recommendedArtist.id]
+                        }
+                      }
+                    ]"
+                    (click)="selectCurrentArtist(recommendedArtist.id)"
+                  >
+                    <div class="Artist me-4">
+                      <div class="content">
+                        @if (recommendedArtist.images) {
+                          <img src="{{ recommendedArtist.images[0].url }}" />
+                        }
+
+                        <div class="d-flex flex-column align-items-center">
+                          <p class="text-white fw-bold m-0 mt-2">
+                            {{ recommendedArtist.name }}
+                          </p>
+                          <small class="text-gray fw-bold m-0"
+                            >Popularity:
+                            {{ recommendedArtist.popularity }}</small
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+                }
+              }
+            } @placeholder {
+              <p>Loading</p>
+            } @loading {
+              <p>Loading</p>
+            }
+          </div>
+        </section>
+
+        <h1 class="mb-6 fs-500">All time artists</h1>
+        <div class="Scroll d-flex flex-nowrap my-10">
           @if (artists$ | async; as artists) {
             @for (artist of artists; track artist.uri) {
               <a
@@ -55,7 +146,7 @@ import { HomeState } from '../store/home/home.state';
           }
         </div>
 
-        <h1 class="my-10">Favorite artists</h1>
+        <h1 class="mb-6 fs-500">Favorite artists</h1>
         <div class="Scroll d-flex flex-nowrap mt-10">
           @if (favoriteArtists$ | async; as favoriteArtists) {
             @for (favoriteArtist of favoriteArtists; track favoriteArtist.uri) {
@@ -91,23 +182,12 @@ import { HomeState } from '../store/home/home.state';
             }
           }
         </div>
-
-        <h1 class="mt-10">Recomendations</h1>
-
-        <mat-chip-listbox aria-label="Genres selection" class="mt-5">
-          @for (genre of genres$ | async; track genre) {
-            <mat-chip-option color="accent">{{
-              genre | titlecase
-            }}</mat-chip-option>
-          }
-        </mat-chip-listbox>
       </section>
     </section>
   `,
   styles: [
     `
       .Home {
-        height: 2000px;
         mat-chip-option {
           height: 32px;
           min-width: 32px;
@@ -145,9 +225,6 @@ import { HomeState } from '../store/home/home.state';
         }
 
         .Artist {
-          height: 190px;
-          width: 190px;
-
           p {
             font-size: 14px;
           }
@@ -162,6 +239,10 @@ import { HomeState } from '../store/home/home.state';
             border-radius: 50%;
           }
         }
+
+        .fs-500 {
+          font-weight: 500;
+        }
       }
     `,
   ],
@@ -169,6 +250,8 @@ import { HomeState } from '../store/home/home.state';
 })
 export class HomeComponent implements OnInit {
   readonly #store = inject(Store);
+  readonly #recommendationService = inject(RecommendationsService);
+  readonly #artistService = inject(ArtistService);
 
   @Select(HomeState.favoriteArtists)
   favoriteArtists$!: Observable<Artist[]>;
@@ -179,14 +262,67 @@ export class HomeComponent implements OnInit {
   @Select(HomeState.topArtists)
   artists$!: Observable<Artist[]>;
 
+  @Select(HomeState.selectedGenres)
+  selectedGenres$!: Observable<string[]>;
+
+  @Select(HomeState.favoriteArtistsIds)
+  favoriteArtistsIds$!: Observable<string[]>;
+
+  recommendedArtists$!: Observable<Artist[]>;
+
   ngOnInit(): void {
     this.#store.dispatch(new Home.FirstLoad());
-    this.#store.select(HomeState).subscribe((v) => {
-      v;
-    });
+    this.recommendedArtists$ = this.selectedGenres$.pipe(
+      withLatestFrom(this.favoriteArtistsIds$),
+      switchMap(([genres, artistsIds]) => {
+        console.log({ genres, artistsIds });
+
+        return this.#recommendationService.artistsRecommendations(
+          genres,
+          artistsIds,
+        );
+      }),
+      map((response) => {
+        const artistsIds = response.tracks.reduce(
+          (acc: string[], curr: Track) => [
+            ...acc,
+            ...curr.artists.map((artist: Artist) => artist.id),
+          ],
+          [],
+        );
+
+        return artistsIds.slice(0, 6);
+      }),
+      tap((v) => {
+        debugger;
+      }),
+      switchMap((ids) =>
+        this.#artistService
+          .getSeveralArtists(ids)
+          .pipe(map((response) => response.artists)),
+      ),
+      shareReplay(),
+    );
   }
 
   selectCurrentArtist(id: string) {
     this.#store.dispatch(new Home.SetCurrentSelectedArtistId(id));
+  }
+
+  onSelectGenre(event: MatChipSelectionChange, genre: string) {
+    const isSelected = event.selected;
+
+    if (isSelected) {
+      this.#store.dispatch(new Home.SelectGenre(genre));
+
+      return;
+    }
+
+    if (!isSelected) {
+      this.#store.dispatch(new Home.UnselectGenre(genre));
+      return;
+    }
+
+    return;
   }
 }

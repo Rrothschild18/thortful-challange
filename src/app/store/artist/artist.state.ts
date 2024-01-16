@@ -73,8 +73,11 @@ export class ArtistState {
 
   @Action(Artist.FirstLoadSingle)
   onFirstLoadSingle(ctx: StateContext<ArtistStateModel>): void {
-    const ids = this.localStorage.getItem('favoriteArtistsIds')! ?? [];
-    const favoriteArtistsIds = JSON.parse(ids);
+    const ids = this.localStorage.getItem('favoriteArtistsIds')! ?? {
+      favoriteArtistsIds: [],
+    };
+
+    const favoriteArtistsIds = JSON.parse(ids).favoriteArtistsIds;
 
     ctx.dispatch(new Home.RestoreFavoriteArtist(favoriteArtistsIds));
     ctx.dispatch(new Artist.FetchArtist());
@@ -93,13 +96,13 @@ export class ArtistState {
       catchError((err) => {
         ctx.dispatch(new Artist.FetchArtistFailed(err));
         return of({});
-      }),
+      })
     );
   }
   @Action(Artist.FetchArtistSuccess)
   onFetchArtistSuccess(
     ctx: StateContext<ArtistStateModel>,
-    payload: Artist.FetchArtistSuccess,
+    payload: Artist.FetchArtistSuccess
   ): void {
     ctx.patchState({
       artist: payload.payload,
@@ -109,7 +112,7 @@ export class ArtistState {
   @Action(Artist.FetchArtistFailed)
   onFetchArtistFailed(
     ctx: StateContext<ArtistStateModel>,
-    payload: Artist.FetchArtistFailed,
+    payload: Artist.FetchArtistFailed
   ): void {
     const state = ctx.getState();
     const { error } = payload.payload;
@@ -125,7 +128,7 @@ export class ArtistState {
   //** Albums */
   @Action(Artist.FetchAlbums)
   onFetchArtistsAlbums(
-    ctx: StateContext<ArtistStateModel>,
+    ctx: StateContext<ArtistStateModel>
   ): Observable<unknown> {
     const state = ctx.getState();
     const params: Omit<ArtistTopItemsParams, 'id' | 'artist'> = {
@@ -140,14 +143,14 @@ export class ArtistState {
       catchError((err) => {
         ctx.dispatch(new Artist.FetchAlbumsFailed(err));
         return of({});
-      }),
+      })
     );
   }
 
   @Action(Artist.FetchAlbumsSuccess)
   onFetchArtistsAlbumsSuccess(
     ctx: StateContext<ArtistStateModel>,
-    payload: Artist.FetchAlbumsSuccess,
+    payload: Artist.FetchAlbumsSuccess
   ): void {
     ctx.patchState({
       albums: payload.response.items,
@@ -157,7 +160,7 @@ export class ArtistState {
   @Action(Artist.FetchAlbumsFailed)
   onFetchArtistsAlbumsFailed(
     ctx: StateContext<ArtistStateModel>,
-    payload: Artist.FetchAlbumsFailed,
+    payload: Artist.FetchAlbumsFailed
   ): void {
     const state = ctx.getState();
     const { error } = payload.payload;
@@ -173,7 +176,7 @@ export class ArtistState {
   /** Tracks */
   @Action(Artist.FetchTopTracks)
   onFetchArtistsTopTracks(
-    ctx: StateContext<ArtistStateModel>,
+    ctx: StateContext<ArtistStateModel>
   ): Observable<unknown> {
     const state = ctx.getState();
     let market = 'US';
@@ -182,19 +185,19 @@ export class ArtistState {
       .getArtistTopTracks(state.id, (market = 'US'))
       .pipe(
         tap((response) =>
-          ctx.dispatch(new Artist.FetchTopTracksSuccess(response)),
+          ctx.dispatch(new Artist.FetchTopTracksSuccess(response))
         ),
         catchError((err) => {
           ctx.dispatch(new Artist.FetchTopTracksFailed(err));
           return of({});
-        }),
+        })
       );
   }
 
   @Action(Artist.FetchTopTracksSuccess)
   onFetchTopTracksSuccess(
     ctx: StateContext<ArtistStateModel>,
-    payload: Artist.FetchTopTracksSuccess,
+    payload: Artist.FetchTopTracksSuccess
   ): void {
     ctx.patchState({
       topTracks: payload.payload.tracks,
@@ -204,7 +207,7 @@ export class ArtistState {
   @Action(Artist.FetchTopTracksFailed)
   onFetchTopTracksFailed(
     ctx: StateContext<ArtistStateModel>,
-    payload: Artist.FetchTopTracksFailed,
+    payload: Artist.FetchTopTracksFailed
   ): void {
     const state = ctx.getState();
     const { error } = payload.payload;
@@ -220,7 +223,7 @@ export class ArtistState {
   /** Related */
   @Action(Artist.FetchRelated)
   onFetchArtistsRelated(
-    ctx: StateContext<ArtistStateModel>,
+    ctx: StateContext<ArtistStateModel>
   ): Observable<unknown> {
     const state = ctx.getState();
 
@@ -229,14 +232,14 @@ export class ArtistState {
       catchError((err) => {
         ctx.dispatch(new Artist.FetchRelatedFailed(err));
         return of({});
-      }),
+      })
     );
   }
 
   @Action(Artist.FetchRelatedSuccess)
   onFetchRelatedSuccess(
     ctx: StateContext<ArtistStateModel>,
-    payload: Artist.FetchRelatedSuccess,
+    payload: Artist.FetchRelatedSuccess
   ): void {
     ctx.patchState({
       relatedArtists: payload.response.artists,
@@ -246,7 +249,7 @@ export class ArtistState {
   @Action(Artist.FetchRelatedFailed)
   onFetchRelatedFailed(
     ctx: StateContext<ArtistStateModel>,
-    payload: Artist.FetchRelatedFailed,
+    payload: Artist.FetchRelatedFailed
   ): void {
     const state = ctx.getState();
     const { error } = payload.payload;
@@ -262,7 +265,7 @@ export class ArtistState {
   @Action(Artist.SetArtistViewId)
   onSetArtistViewId(
     ctx: StateContext<ArtistStateModel>,
-    payload: Artist.SetArtistViewId,
+    payload: Artist.SetArtistViewId
   ): void {
     ctx.patchState({
       id: payload.payload,
