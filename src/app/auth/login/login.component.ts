@@ -7,17 +7,62 @@ import { environment } from 'src/environments/environment.development';
   standalone: true,
   imports: [MatButtonModule],
   template: `
-    <section class="bg-primary vh-100">
-      <div class="container text-center">
-        <h3 class="m-0 text-white">Login Works</h3>
+    <section class="bg-primary vh-100 w-100 content">
+      <header class="Header d-flex align-items-center px-10">
+        <img
+          alt="Youtube Music Logo"
+          src="https://music.youtube.com/img/on_platform_logo_dark.svg"
+        />
+      </header>
+      <div class="container text-center login-container ">
+        <h1 class="text-white login">Login into Youtube Music</h1>
 
-        <button mat-flat-button color="primary" (click)="auth()">
+        <button
+          class="login-btn mt-5"
+          color="accent"
+          mat-flat-button
+          (click)="auth()"
+        >
           Connect
         </button>
       </div>
     </section>
   `,
-  styles: [``],
+  styles: [
+    `
+      .Header {
+        background-color: #030303e6;
+        height: 50px;
+      }
+
+      .login {
+        padding-top: 30px;
+        font-size: 52px;
+      }
+
+      .login-btn {
+        width: 200px;
+        height: 50px;
+        border-radius: 20px;
+      }
+
+      .content {
+        height: 700px;
+        background: linear-gradient(
+          rgba(255, 255, 255, 0.1) 0%,
+          rgb(0, 0, 0) 100%
+        );
+      }
+
+      .login-container {
+        height: 500px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+    `,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginComponent {
