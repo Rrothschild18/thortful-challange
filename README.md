@@ -1,27 +1,26 @@
 # ThortfulChallange
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.0.5.
+### How to run
+Step 1 - The app relies on Spotify Web Api, to run it locally is needed to create an account at [Spotify Web Api](https://developer.spotify.com/). Generally you can access with your normal spotify account.
+Once you log in, access  [Spotify Web Api Documentation](https://developer.spotify.com/documentation/web-api) to create an authorized application. 
 
-## Development server
+Step 2 - Set up your `envoirement.development.ts` file 
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+```ts
+export const environment = {
+  baseURL: 'https://api.spotify.com/v1', // 
+  clientId: YOUR_CLIENT_ID  // Generated from Spotify
+  authURL: 'https://accounts.spotify.com/authorize',
+  redirectURL: YOUR_REDIRECT_URL, // Example 'http://localhost:4200/auth/callback' previosly registered at Spotify API Dashboard
+  scopes: [ // Required API scopes
+    'user-read-recently-played', 
+    'user-top-read',
+    'user-library-read',
+    'playlist-read-private',
+    'playlist-read-collaborative',
+  ],
+};
+```
+Step 3 - run `npm i` inside the cloned project folder
 
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+Sep 4 - run `ng serve --configuration development`
