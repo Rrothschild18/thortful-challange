@@ -22,12 +22,24 @@ export class RecommendationsService {
 
   artistsRecommendations(
     seed_genres: string[],
-    artistsIds: string[]
+    artistsIds: string[],
   ): Observable<{ tracks: Track[] }> {
+    let toParams: Record<string, unknown> = {};
+
+    if (!artistsIds.length) {
+      toParams['seed_artists'] = ['1Xyo4u8uXC1ZmMpatF05PJ']; //Default artist
+    }
+
+    if (!seed_genres.length) {
+      toParams['seed_genres'] = [];
+    }
+
+    debugger;
     const params = new HttpParams({
       fromObject: {
         seed_genres: seed_genres,
-        seed_artists: artistsIds.join(','),
+        seed_artists: artistsIds,
+        ...toParams,
       },
     });
 

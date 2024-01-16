@@ -17,14 +17,7 @@ import { Track } from '@models/index';
 import { Select, Store } from '@ngxs/store';
 import { ArtistService } from '@services/index';
 import { RecommendationsService } from '@services/recommendations.service';
-import {
-  Observable,
-  map,
-  shareReplay,
-  switchMap,
-  tap,
-  withLatestFrom,
-} from 'rxjs';
+import { Observable, map, shareReplay, switchMap, withLatestFrom } from 'rxjs';
 import { Home } from '../store/home/home.actions';
 import { HomeState } from '../store/home/home.state';
 
@@ -111,77 +104,84 @@ import { HomeState } from '../store/home/home.state';
           </div>
         </section>
 
-        <h1 class="mb-6 fs-500">All time artists</h1>
-        <div class="Scroll d-flex flex-nowrap my-10">
-          @if (artists$ | async; as artists) {
-            @for (artist of artists; track artist.uri) {
-              <a
-                class="text-decoration-none"
-                [routerLink]="[
-                  '/home',
-                  {
-                    outlets: {
-                      overview: ['artist-overview', artist.id]
+        <section>
+          <h1 class="mb-6 fs-500">All time artists</h1>
+          <div class="Scroll d-flex flex-nowrap my-10">
+            @if (artists$ | async; as artists) {
+              @for (artist of artists; track artist.uri) {
+                <a
+                  class="text-decoration-none"
+                  [routerLink]="[
+                    '/home',
+                    {
+                      outlets: {
+                        overview: ['artist-overview', artist.id]
+                      }
                     }
-                  }
-                ]"
-                (click)="selectCurrentArtist(artist.id)"
-              >
-                <div class="Artist me-4">
-                  <div class="content">
-                    <img src="{{ artist.images[0].url }}" />
+                  ]"
+                  (click)="selectCurrentArtist(artist.id)"
+                >
+                  <div class="Artist me-4">
+                    <div class="content">
+                      <img src="{{ artist.images[0].url }}" />
 
-                    <div class="d-flex flex-column align-items-center">
-                      <p class="text-white fw-bold m-0 mt-2">
-                        {{ artist.name }}
-                      </p>
-                      <small class="text-gray fw-bold m-0"
-                        >Popularity: {{ artist.popularity }}</small
-                      >
+                      <div class="d-flex flex-column align-items-center">
+                        <p class="text-white fw-bold m-0 mt-2">
+                          {{ artist.name }}
+                        </p>
+                        <small class="text-gray fw-bold m-0"
+                          >Popularity: {{ artist.popularity }}</small
+                        >
+                      </div>
                     </div>
                   </div>
-                </div>
-              </a>
+                </a>
+              }
             }
-          }
-        </div>
+          </div>
+        </section>
 
-        <h1 class="mb-6 fs-500">Favorite artists</h1>
-        <div class="Scroll d-flex flex-nowrap mt-10">
-          @if (favoriteArtists$ | async; as favoriteArtists) {
-            @for (favoriteArtist of favoriteArtists; track favoriteArtist.uri) {
-              <a
-                class="text-decoration-none"
-                [routerLink]="[
-                  '/home',
-                  {
-                    outlets: {
-                      overview: ['artist-overview', favoriteArtist.id]
+        <section>
+          <h1 class="mb-6 fs-500">Favorite artists</h1>
+          <div class="Scroll d-flex flex-nowrap mt-10">
+            @if (favoriteArtists$ | async; as favoriteArtists) {
+              @for (
+                favoriteArtist of favoriteArtists;
+                track favoriteArtist.uri
+              ) {
+                <a
+                  class="text-decoration-none"
+                  [routerLink]="[
+                    '/home',
+                    {
+                      outlets: {
+                        overview: ['artist-overview', favoriteArtist.id]
+                      }
                     }
-                  }
-                ]"
-                (click)="selectCurrentArtist(favoriteArtist.id)"
-              >
-                <div class="Artist me-4">
-                  <div class="content">
-                    <img src="{{ favoriteArtist.images[0].url }}" />
+                  ]"
+                  (click)="selectCurrentArtist(favoriteArtist.id)"
+                >
+                  <div class="Artist me-4">
+                    <div class="content">
+                      <img src="{{ favoriteArtist.images[0].url }}" />
 
-                    <div class="d-flex flex-column align-items-center">
-                      <p class="text-white fw-bold m-0 mt-2">
-                        {{ favoriteArtist.name }}
-                      </p>
-                      <small class="text-gray fw-bold m-0"
-                        >Popularity: {{ favoriteArtist.popularity }}</small
-                      >
+                      <div class="d-flex flex-column align-items-center">
+                        <p class="text-white fw-bold m-0 mt-2">
+                          {{ favoriteArtist.name }}
+                        </p>
+                        <small class="text-gray fw-bold m-0"
+                          >Popularity: {{ favoriteArtist.popularity }}</small
+                        >
+                      </div>
                     </div>
                   </div>
-                </div>
-              </a>
-            } @empty {
-              <h4>No favorite artists</h4>
+                </a>
+              } @empty {
+                <h4>No favorite artists</h4>
+              }
             }
-          }
-        </div>
+          </div>
+        </section>
       </section>
     </section>
   `,
@@ -275,8 +275,6 @@ export class HomeComponent implements OnInit {
     this.recommendedArtists$ = this.selectedGenres$.pipe(
       withLatestFrom(this.favoriteArtistsIds$),
       switchMap(([genres, artistsIds]) => {
-        console.log({ genres, artistsIds });
-
         return this.#recommendationService.artistsRecommendations(
           genres,
           artistsIds,
@@ -292,9 +290,6 @@ export class HomeComponent implements OnInit {
         );
 
         return artistsIds.slice(0, 6);
-      }),
-      tap((v) => {
-        debugger;
       }),
       switchMap((ids) =>
         this.#artistService
