@@ -34,7 +34,6 @@ export class RecommendationsService {
       toParams['seed_genres'] = [];
     }
 
-    debugger;
     const params = new HttpParams({
       fromObject: {
         seed_genres: seed_genres,
