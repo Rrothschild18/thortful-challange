@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
-import { Observable, map } from 'rxjs';
+import { Observable, filter, map } from 'rxjs';
 import { CoreModule } from './core/core.module';
 import { SharedModule } from './shared/shared.module';
 
@@ -35,15 +35,11 @@ export class AppComponent implements OnInit {
 
   hideMenuByUrl() {
     this.isLoginRoute$ = this.#router.events.pipe(
-      // filter((router) => router instanceof NavigationEnd),
+      filter((router) => router instanceof NavigationEnd),
       map((router: unknown) => {
         let routers = router as NavigationEnd;
         const paths = ['/', '/auth', '/not-found'];
-        debugger;
-        console.log({
-          routers,
-          isLoginRoute: !paths.includes(routers.url),
-        });
+
         return !paths.includes(routers.url);
       }),
     );

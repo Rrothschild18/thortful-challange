@@ -45,7 +45,6 @@ export class HomeState {
 
   @Selector()
   public static favoriteArtistsIds(state: HomeStateModel): string[] {
-    console.log({ state });
     return state.favoriteArtistsIds;
   }
 
@@ -57,7 +56,7 @@ export class HomeState {
   constructor(
     private userService: UserService,
     private genresService: GenresService,
-    private artistService: ArtistService
+    private artistService: ArtistService,
   ) {}
 
   @Action(Home.FirstLoad)
@@ -68,7 +67,7 @@ export class HomeState {
         limit: 10,
         offset: 1,
         time_range: 'medium_term',
-      })
+      }),
     );
 
     const localStorageData = this.localStorage.getItem('favoriteArtistsIds');
@@ -82,7 +81,7 @@ export class HomeState {
   /** Genres */
   @Action(Home.FetchMusicGenres)
   onFetchMusicGenres(
-    ctx: StateContext<HomeStateModel>
+    ctx: StateContext<HomeStateModel>,
   ): Observable<GenresFromApi> {
     return this.genresService.getGenres().pipe(
       catchError((err) => {
@@ -122,15 +121,15 @@ export class HomeState {
         });
       }),
       tap((response: GenresFromApi) =>
-        ctx.dispatch(new Home.FetchMusicGenresSuccess(response.genres))
-      )
+        ctx.dispatch(new Home.FetchMusicGenresSuccess(response.genres)),
+      ),
     );
   }
 
   @Action(Home.FetchMusicGenresSuccess)
   onFetchGenresSuccess(
     ctx: StateContext<HomeStateModel>,
-    payload: Home.FetchMusicGenresSuccess
+    payload: Home.FetchMusicGenresSuccess,
   ): void {
     ctx.patchState({
       genres: payload.payload,
@@ -140,7 +139,7 @@ export class HomeState {
   @Action(Home.FetchMusicGenresSuccess)
   onFetchGenresFailed(
     ctx: StateContext<HomeStateModel>,
-    payload: Home.FetchMusicGenresFailed
+    payload: Home.FetchMusicGenresFailed,
   ): void {
     const stateErrors = ctx.getState().errors;
     ctx.patchState({
@@ -155,7 +154,7 @@ export class HomeState {
   @Action(Home.FetchTopArtists)
   onFetchTopArtists(
     ctx: StateContext<HomeStateModel>,
-    payload: Home.FetchTopArtists
+    payload: Home.FetchTopArtists,
   ): Observable<TopItemsList> {
     return this.userService.getUserTopItems(payload.params).pipe(
       catchError((err) => {
@@ -173,14 +172,16 @@ export class HomeState {
           items: [],
         } as unknown as TopItemsList);
       }),
-      tap((response) => ctx.dispatch(new Home.FetchTopArtistsSuccess(response)))
+      tap((response) =>
+        ctx.dispatch(new Home.FetchTopArtistsSuccess(response)),
+      ),
     );
   }
 
   @Action(Home.FetchTopArtistsSuccess)
   onFetchTopArtistsSuccess(
     ctx: StateContext<HomeStateModel>,
-    payload: Home.FetchTopArtistsSuccess
+    payload: Home.FetchTopArtistsSuccess,
   ): void {
     ctx.patchState({
       topArtists: payload.response.items,
@@ -190,7 +191,7 @@ export class HomeState {
   @Action(Home.FetchTopArtistsFailed)
   onFetchTopArtistsFailed(
     ctx: StateContext<HomeStateModel>,
-    payload: Home.FetchTopArtistsFailed
+    payload: Home.FetchTopArtistsFailed,
   ): void {
     const stateErrors = ctx.getState().errors;
     ctx.patchState({
@@ -204,7 +205,7 @@ export class HomeState {
   @Action(Home.SetCurrentSelectedArtistId)
   onSetCurrentSelectedArtistId(
     ctx: StateContext<HomeStateModel>,
-    payload: Home.SetCurrentSelectedArtistId
+    payload: Home.SetCurrentSelectedArtistId,
   ): void {
     ctx.patchState({
       selectedArtistId: payload.artistId,
@@ -214,7 +215,7 @@ export class HomeState {
   @Action(Home.AddFavoriteArtist)
   onAddFavoriteArtist(
     ctx: StateContext<HomeStateModel>,
-    payload: Home.AddFavoriteArtist
+    payload: Home.AddFavoriteArtist,
   ): void {
     let state = ctx.getState();
 
@@ -226,20 +227,20 @@ export class HomeState {
 
     this.localStorage.setItem(
       'favoriteArtistsIds',
-      JSON.stringify({ favoriteArtistsIds: state.favoriteArtistsIds })
+      JSON.stringify({ favoriteArtistsIds: state.favoriteArtistsIds }),
     );
   }
 
   @Action(Home.RemoveFavoriteArtist)
   onRemoveFavoriteArtist(
     ctx: StateContext<HomeStateModel>,
-    payload: Home.RemoveFavoriteArtist
+    payload: Home.RemoveFavoriteArtist,
   ): void {
     let state = ctx.getState();
 
     ctx.patchState({
       favoriteArtistsIds: state.favoriteArtistsIds.filter(
-        (id) => id !== payload.artistId
+        (id) => id !== payload.artistId,
       ),
     });
 
@@ -247,14 +248,14 @@ export class HomeState {
 
     this.localStorage.setItem(
       'favoriteArtistsIds',
-      JSON.stringify({ favoriteArtistsIds: state.favoriteArtistsIds })
+      JSON.stringify({ favoriteArtistsIds: state.favoriteArtistsIds }),
     );
   }
 
   @Action(Home.RestoreFavoriteArtist)
   onRestoreFavoriteArtists(
     ctx: StateContext<HomeStateModel>,
-    payload: Home.RestoreFavoriteArtist
+    payload: Home.RestoreFavoriteArtist,
   ): void {
     ctx.patchState({
       favoriteArtistsIds: payload.artistsId,
@@ -263,7 +264,7 @@ export class HomeState {
 
   @Action(Home.FetchFavoriteArtists)
   onFetchFavoriteArtists(
-    ctx: StateContext<HomeStateModel>
+    ctx: StateContext<HomeStateModel>,
   ): Observable<ArtistList> {
     const state = ctx.getState();
 
@@ -284,15 +285,15 @@ export class HomeState {
         } as unknown as ArtistList);
       }),
       tap((response) =>
-        ctx.dispatch(new Home.FetchFavoriteArtistsSuccess(response))
-      )
+        ctx.dispatch(new Home.FetchFavoriteArtistsSuccess(response)),
+      ),
     );
   }
 
   @Action(Home.FetchFavoriteArtistsSuccess)
   onFetchFavoriteArtistsSuccess(
     ctx: StateContext<HomeStateModel>,
-    payload: Home.FetchFavoriteArtistsSuccess
+    payload: Home.FetchFavoriteArtistsSuccess,
   ): void {
     ctx.patchState({
       favoriteArtists: payload.payload.artists || [],
@@ -302,7 +303,7 @@ export class HomeState {
   @Action(Home.SelectGenre)
   onSelectGenre(
     ctx: StateContext<HomeStateModel>,
-    payload: Home.SelectGenre
+    payload: Home.SelectGenre,
   ): void {
     const state = ctx.getState();
     ctx.patchState({
@@ -313,12 +314,12 @@ export class HomeState {
   @Action(Home.UnselectGenre)
   onUnselectGenre(
     ctx: StateContext<HomeStateModel>,
-    payload: Home.UnselectGenre
+    payload: Home.UnselectGenre,
   ): void {
     const state = ctx.getState();
     ctx.patchState({
       selectedGenres: state.selectedGenres.filter(
-        (selectedGenre) => selectedGenre !== payload.genre
+        (selectedGenre) => selectedGenre !== payload.genre,
       ),
     });
   }
