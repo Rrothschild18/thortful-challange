@@ -1,17 +1,34 @@
 # ThortfulChallange
 
 ### How to run
-Step 1 - The app relies on Spotify Web Api, to run it locally is needed to create an account at [Spotify Web Api](https://developer.spotify.com/). Generally you can access with your normal spotify account.
-Once you log in, access  [Spotify Web Api Documentation](https://developer.spotify.com/documentation/web-api) to create an authorized application. 
+> [!IMPORTANT]  
+> The app relies on Spotify Web Api. The environment configuration already has working credentials, if you dont want to set up your own app just `jump to step 3`
 
-Step 2 - Set up your `envoirement.development.ts` file 
+
+---
+Step 1 - To run it locally and access their API is needed to create an account at [Spotify Web Api](https://developer.spotify.com/). 
+Generally you can access the developer section with your usual spotify account. Once you log in, access  [Spotify Web Api Documentation](https://developer.spotify.com/documentation/web-api) to setting up an authorized application and
+get your `clientId` and registering the `redirectURL`
+
+
+<details>
+  <summary>Your app dasboard shoud like this</summary>
+<p align="center" >
+ <img src='https://github.com/Rrothschild18/thortful-challange/assets/39390678/eff5a30f-3965-41af-99ad-1212516dc19f'>
+</p>
+</details>
+
+
+Step 2 - Set up your `environment.development.ts` file
 
 ```ts
+//Example of environment.development.ts
+
 export const environment = {
-  baseURL: 'https://api.spotify.com/v1', // 
+  baseURL: 'https://api.spotify.com/v1',  
   clientId: YOUR_CLIENT_ID  // Generated from Spotify
   authURL: 'https://accounts.spotify.com/authorize',
-  redirectURL: YOUR_REDIRECT_URL, // Example 'http://localhost:4200/auth/callback' previosly registered at Spotify API Dashboard
+  redirectURL: YOUR_REDIRECT_URL, // Example for this project 'http://localhost:4200/auth/callback' previously registered at Spotify API Dashboard
   scopes: [ // Required API scopes
     'user-read-recently-played', 
     'user-top-read',
@@ -21,6 +38,18 @@ export const environment = {
   ],
 };
 ```
-Step 3 - run `npm i` inside the cloned project folder
+Step 3 - run `npm i` inside the `cloned project folder`
 
 Sep 4 - run `ng serve --configuration development`
+
+
+### Features
+
+`Home Page` => The main page of the application where it combines your all time listened artists, recommendations based at your favorited artists and a section of all favorite artists.
+
+`ArtistOverview` => A router outlet responsable to display few informations of the selected artist.
+
+`ArtistView` => A single page where full informations about the artists can be seen
+
+`SearchBar` => A input where user can search for his favorite artist and then be redirected to it view page.
+
