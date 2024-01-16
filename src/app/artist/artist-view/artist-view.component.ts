@@ -55,51 +55,51 @@ import { HomeState } from 'src/app/store/home/home.state';
   template: `
     <section class="ArtistView">
       @if (artist$ | async; as artist) {
-        <section class="Banner">
+      <section class="Banner">
+        <div
+          class="background-img"
+          [style.background-image]="'url(' + artist.images[0]?.url + ')'"
+        ></div>
+        <div class="container content">
+          <h1 class="m-0">
+            {{ artist.name }}
+          </h1>
+          <p class="text-white m-0 mt-4">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores
+            corrupti rem, provident impedit nesciunt itaque mollitia similique
+            eveniet optio nihil repellendus fuga architecto tempore recusandae
+            voluptatibus aut quasi eos suscipit!
+          </p>
           <div
-            class="background-img"
-            [style.background-image]="'url(' + artist.images[0]?.url + ')'"
-          ></div>
-          <div class="container content">
-            <h1 class="m-0">
-              {{ artist.name }}
-            </h1>
-            <p class="text-white m-0 mt-4">
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-              Asperiores corrupti rem, provident impedit nesciunt itaque
-              mollitia similique eveniet optio nihil repellendus fuga architecto
-              tempore recusandae voluptatibus aut quasi eos suscipit!
-            </p>
-            <div
-              class="action-buttons mt-4 d-flex justify-content-start align-items-center"
-            >
-              <button class="white me-2" mat-flat-button color="accent">
-                <p>Shuffle</p>
-                <mat-icon> shuffle </mat-icon>
-              </button>
-              <button class="white me-3" mat-flat-button color="accent">
-                <p>Radio</p>
-                <mat-icon> stream </mat-icon>
-              </button>
-              <button class="white followers" mat-stroked-button color="warn">
-                <small
-                  >Follow {{ artist.followers.total | followersCounter }}</small
-                >
-              </button>
-
-              <button
-                mat-icon-button
-                color="accent"
-                [matTooltip]="(toolTipMessage$ | async) || ''"
-                (mouseenter)="onMouseEnter()"
-                (mouseleave)="onMouseLeave()"
-                (click)="favoriteArtist()"
+            class="action-buttons mt-4 d-flex justify-content-start align-items-center"
+          >
+            <button class="white me-2" mat-flat-button color="accent">
+              <p>Shuffle</p>
+              <mat-icon> shuffle </mat-icon>
+            </button>
+            <button class="white me-3" mat-flat-button color="accent">
+              <p>Radio</p>
+              <mat-icon> stream </mat-icon>
+            </button>
+            <button class="white followers" mat-stroked-button color="warn">
+              <small
+                >Follow {{ artist.followers.total | followersCounter }}</small
               >
-                <mat-icon>{{ icon$ | async }}</mat-icon>
-              </button>
-            </div>
+            </button>
+
+            <button
+              mat-icon-button
+              color="accent"
+              [matTooltip]="(toolTipMessage$ | async) || ''"
+              (mouseenter)="onMouseEnter()"
+              (mouseleave)="onMouseLeave()"
+              (click)="favoriteArtist()"
+            >
+              <mat-icon>{{ icon$ | async }}</mat-icon>
+            </button>
           </div>
-        </section>
+        </div>
+      </section>
       }
 
       <section class="TopTracks my-10">
@@ -108,28 +108,28 @@ import { HomeState } from 'src/app/store/home/home.state';
 
           <mat-list role="list">
             @for (track of tracks$ | async; track track.id) {
-              <mat-list-item role="listitem" class="py-1 w-100">
-                <div class="d-flex justify-content-between">
-                  <div class="d-flex align-items-center spacing">
-                    <img
-                      class="track-cover me-2 "
-                      [src]="track.album.images[0].url"
-                    />
-                    <p class="m-0">
-                      {{ track.name }}
-                    </p>
-                  </div>
-
-                  <div class="spacing text-center">
-                    {{ artistName$ | async }}
-                  </div>
-
-                  <div class="spacing text-end">
-                    {{ track.album.name }}
-                  </div>
+            <mat-list-item role="listitem" class="py-1 w-100">
+              <div class="d-flex justify-content-between">
+                <div class="d-flex align-items-center spacing">
+                  <img
+                    class="track-cover me-2 "
+                    [src]="track.album.images[0].url"
+                  />
+                  <p class="m-0">
+                    {{ track.name }}
+                  </p>
                 </div>
-              </mat-list-item>
-              <mat-divider class="w-100"> </mat-divider>
+
+                <div class="spacing text-center">
+                  {{ artistName$ | async }}
+                </div>
+
+                <div class="spacing text-end">
+                  {{ track.album.name }}
+                </div>
+              </div>
+            </mat-list-item>
+            <mat-divider class="w-100"> </mat-divider>
             }
           </mat-list>
         </div>
@@ -140,22 +140,22 @@ import { HomeState } from 'src/app/store/home/home.state';
 
         <div class="Scroll d-flex no-wrap">
           @for (album of albums$ | async; track album.id) {
-            <div class="d-flex flex-column album-content me-6">
-              <img class="album-cover" [src]="album.images[0].url" />
-              <div>
-                <p class="m-0 album-title mt-2">{{ album.name }}</p>
-                <div class="d-flex">
-                  <p class="m-0 text-grey me-1">
-                    {{ album.album_type | titlecase }} •
-                  </p>
-                  <p class="m-0 text-grey">
-                    {{ album.release_date | date: 'yyyy' }}
-                  </p>
-                </div>
+          <div class="d-flex flex-column album-content me-6">
+            <img class="album-cover" [src]="album.images[0].url" />
+            <div>
+              <p class="m-0 album-title mt-2">{{ album.name }}</p>
+              <div class="d-flex">
+                <p class="m-0 text-grey me-1">
+                  {{ album.album_type | titlecase }} •
+                </p>
+                <p class="m-0 text-grey">
+                  {{ album.release_date | date : 'yyyy' }}
+                </p>
               </div>
             </div>
+          </div>
           } @empty {
-            <p>No albums</p>
+          <p>No albums</p>
           }
         </div>
       </section>
@@ -164,31 +164,29 @@ import { HomeState } from 'src/app/store/home/home.state';
         <h1>Related Artists</h1>
 
         <div class="Scroll d-flex no-wrap">
-          @for (
-            relatedArtist of relatedArtists$ | async;
-            track relatedArtist.id
-          ) {
-            <a [routerLink]="['/artist', relatedArtist.id]">
-              <div
-                class="d-flex flex-column artist-content me-6 align-items-center"
-              >
-                <img
-                  class="artist-cover"
-                  src="{{ relatedArtist.images[0].url }}"
-                />
-                <div>
-                  <p class="m-0 title text-center mt-2">
-                    {{ relatedArtist.name }}
-                  </p>
-                  <p class="m-0 text-grey">
-                    {{ relatedArtist.followers.total | followersCounter }}
-                    followers
-                  </p>
-                </div>
+          @for ( relatedArtist of relatedArtists$ | async; track
+          relatedArtist.id ) {
+          <a [routerLink]="['/artist', relatedArtist.id]">
+            <div
+              class="d-flex flex-column artist-content me-6 align-items-center"
+            >
+              <img
+                class="artist-cover"
+                src="{{ relatedArtist.images[0].url }}"
+              />
+              <div>
+                <p class="m-0 title text-center mt-2">
+                  {{ relatedArtist.name }}
+                </p>
+                <p class="m-0 text-grey">
+                  {{ relatedArtist.followers.total | followersCounter }}
+                  followers
+                </p>
               </div>
-            </a>
+            </div>
+          </a>
           } @empty {
-            <p>No related artists</p>
+          <p>No related artists</p>
           }
         </div>
       </section>
@@ -374,12 +372,12 @@ export class ArtistViewComponent implements OnInit, OnDestroy {
   }).pipe(
     map(
       ({ favoriteArtistFromStore, currentArtistId }) =>
-        !!favoriteArtistFromStore.find((id) => id === currentArtistId),
-    ),
+        !!favoriteArtistFromStore.find((id) => id === currentArtistId)
+    )
   );
 
   protected isAnFavorite: Signal<boolean | undefined> = toSignal(
-    this.isAnFavoriteArtist$,
+    this.isAnFavoriteArtist$
   );
 
   @Input()
@@ -402,7 +400,7 @@ export class ArtistViewComponent implements OnInit, OnDestroy {
   firstLoad() {
     this.firstLoad$ = this.artistId$.asObservable().pipe(
       filter((id) => !!id.length),
-      map((id) => id),
+      map((id) => id)
     );
 
     //https://angular.io/api/core/rxjs-interop/takeUntilDestroyed PREVIEW
@@ -411,7 +409,7 @@ export class ArtistViewComponent implements OnInit, OnDestroy {
         concatMap((id) => this.#store.dispatch(new Artist.SetArtistViewId(id))),
         tap(() => {
           this.#store.dispatch(new Artist.FirstLoadSingle());
-        }),
+        })
       )
       .subscribe();
 
@@ -438,20 +436,17 @@ export class ArtistViewComponent implements OnInit, OnDestroy {
   checkFavoriteArtist() {
     this.isAnFavoriteArtist$ = this.favoriteArtistIds$.pipe(
       withLatestFrom(this.artistId$),
-      tap((v) => {
-        debugger;
-      }),
       map(
         ([favoriteArtistsFromStore, currentArtistId]: [string[], string]) =>
-          !!favoriteArtistsFromStore.find((id) => id === currentArtistId),
-      ),
+          !!favoriteArtistsFromStore.find((id) => id === currentArtistId)
+      )
     );
   }
 
   favoriteArtist() {
     if (this.isAnFavorite()) {
       this.#store.dispatch(
-        new Home.RemoveFavoriteArtist(this.artistId$.getValue()),
+        new Home.RemoveFavoriteArtist(this.artistId$.getValue())
       );
 
       this.#snackBar.open('Artist removed from favorites', 'Ok');
@@ -465,9 +460,9 @@ export class ArtistViewComponent implements OnInit, OnDestroy {
   setTooltipMessage() {
     this.toolTipMessage$ = this.isAnFavoriteArtist$.pipe(
       tap((isFavorite) =>
-        isFavorite ? this.icon$.next('star') : this.icon$.next('star_half'),
+        isFavorite ? this.icon$.next('star') : this.icon$.next('star_half')
       ),
-      map((isFavorite) => (isFavorite ? 'Unfavorite' : 'Favorite')),
+      map((isFavorite) => (isFavorite ? 'Unfavorite' : 'Favorite'))
     );
   }
 }
